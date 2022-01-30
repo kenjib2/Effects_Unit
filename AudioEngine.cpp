@@ -118,7 +118,7 @@ void initializeAudioEngine(usb_midi_class usbMIDIControl) {
   vcfModMixer.gain(0, 0.0);
   vcfModMixer.gain(1, 0.0);
 
-  vcaPassThroughEnvelope.attack(0);
+  vcaPassThroughEnvelope.attack(1);
   vcaPassThroughEnvelope.decay(0);
   vcaPassThroughEnvelope.sustain(1);
   vcaPassThroughEnvelope.release(1);
@@ -133,7 +133,7 @@ void initializeAudioEngine(usb_midi_class usbMIDIControl) {
 
   envelopeDc.amplitude(1.0);
 
-  envelope.attack(0);
+  envelope.attack(1);
   envelope.decay(0);
   envelope.sustain(1);
   envelope.release(1);
@@ -348,6 +348,7 @@ void myControlChange(byte channel, byte control, byte value) {
 
     case 115:
       // VCF LFO
+      vcfModMixer.gain(1, value * DIV127);
       break;
 
     // ============================== VCA Controls ==============================
@@ -368,7 +369,7 @@ void myControlChange(byte channel, byte control, byte value) {
     // ============================== Envelope Controls ==============================
     case 118:
       // Attack
-      envelope.attack(3000 * (value * DIV127));
+      envelope.attack(3000 * (value * DIV127) + 1);
       break;
 
     case 119:
