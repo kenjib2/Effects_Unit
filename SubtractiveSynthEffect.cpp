@@ -5,6 +5,7 @@
 
 SubtractiveSynthEffect::SubtractiveSynthEffect() {
   strcpy(effectName, "SubtractiveSynth");
+  usesSynthMidi = true;
   
   numButtons = 4;
   char label[] = "1234";
@@ -56,4 +57,7 @@ SubtractiveSynthEffect::SubtractiveSynthEffect() {
   setSwitchLabel(0, label);
   strcpy(label, "Sus");
   setSwitchLabel(1, label);
+}
+
+void SubtractiveSynthEffect::processEffect(int16_t * effectBuffer) {
 }

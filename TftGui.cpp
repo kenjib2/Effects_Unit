@@ -27,36 +27,36 @@ void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
 
   // Buttons labels
   tft.setTextColor(COLOR_TEXT);
-  for (int i = 0; i < effect.numButtons; i++) {
+  for (int i = 0; i < effect->numButtons; i++) {
     tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + i * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
         yPos + DISPLAY_PANEL_MARGIN
         );
-    tft.print(effect.buttonLabels[i]);
+    tft.print(effect->buttonLabels[i]);
   }
 
   // Knob labels
-  for (int i = 0; i < effect.numKnobs; i++) {
+  for (int i = 0; i < effect->numKnobs; i++) {
     int row = i / CTRL_PER_ROW;
     int column = i % CTRL_PER_ROW;
     
     tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + column * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
         yPos + DISPLAY_PANEL_MARGIN + (row + 1) * LINE_HEIGHT + SPACER_SIZE
         );
-    tft.print(effect.knobLabels[i]);
+    tft.print(effect->knobLabels[i]);
   }
 
   // Switch labels
-  for (int i = 0; i < effect.numSwitches; i++) {
+  for (int i = 0; i < effect->numSwitches; i++) {
     tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + CTRL_PER_ROW * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2) + SPACER_SIZE,
         yPos + DISPLAY_PANEL_MARGIN + SPACER_SIZE + i * 3 * LINE_HEIGHT
         );
-    tft.print(effect.switchLabels[i]);
+    tft.print(effect->switchLabels[i]);
   }
 }
 
 
-Effect PatchPanel::getSelectedEffect() {
-  return patch.effects[selectedEffect];
+Effect * PatchPanel::getSelectedEffect() {
+  return patch->effects[selectedEffect];
 }
 
 void PatchPanel::decrementSelect() {
@@ -101,7 +101,7 @@ void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
     tft.setTextColor(COLOR_TEXT_SELECTED);
   }
   tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + 7 * FONT_WIDTH + SPACER_SIZE, yPos + DISPLAY_PANEL_MARGIN);
-  tft.print(patch.patchName);
+  tft.print(patch->patchName);
 
   // Effect Names
   char fxLabel[] = "FX 0:  ";
@@ -124,7 +124,7 @@ void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
     tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + 7 * FONT_WIDTH + SPACER_SIZE
         , yPos + DISPLAY_PANEL_MARGIN + SPACER_SIZE + (i + 1) * LINE_HEIGHT
         );
-    tft.print(patch.effects[i].effectName);
+    tft.print(patch->effects[i]->effectName);
   }
 
   // Options
@@ -204,25 +204,36 @@ void Window::select() {
 
 void Window::initDisplay() {
   tft.initR(INITR_BLACKTAB);
-  tft.setRotation(1);
+//  tft.setRotation(1);
 
-  tft.fillScreen(ST7735_WHITE);
-  tft.setTextSize(FONT_SIZE);
+//  tft.fillScreen(ST7735_WHITE);
+//  tft.setTextSize(FONT_SIZE);
 }
 
 void Window::createTestData() {
     // TEST DATA
   char patchName[] = "123456789012345678";
   strcpy(patchName, "Return Of The Jedi");
-  patchPanel.patch.setPatchName(patchName);
+  Patch * patch = new Patch();
+  patch->setPatchName(patchName);
 
-  SubtractiveSynthEffect effect0;
-  patchPanel.patch.setEffect(0, effect0);
+  SubtractiveSynthEffect *effect0 = new SubtractiveSynthEffect();
+  patch->setEffect(0, effect0);
 
-  TemporalCollapseEffect effect1;
-  patchPanel.patch.setEffect(1, effect1);
+  TemporalCollapseEffect *effect1 = new TemporalCollapseEffect();
+  patch->setEffect(1, effect1);
+
+  patchPanel.patch = patch;
 
   int selectedEffect = 0;
   patchPanel.selectedEffect = selectedEffect;
-  controlsPanel.effect = patchPanel.patch.effects[selectedEffect];
+  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
+}
+
+Patch Window::getPatch() {
+  return *(patchPanel.patch);
+}
+
+Effect Window::getEffect(int effectNumber) {
+  return *(patchPanel.patch->effects[effectNumber]);
 }

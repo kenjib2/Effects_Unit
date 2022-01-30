@@ -35,9 +35,24 @@ void Effect::setSwitchLabel(int switchNumber, char * label) {
   memcpy(switchLabels[switchNumber], label, CTRL_LABEL_LENGTH);
 }
 
+void Effect::processEffect(short * effectBuffer){} // To make it not inline and fix the vtable
+
+
+BypassEffect::BypassEffect() {
+  strcpy(effectName, "Bypass");
+  usesSynthMidi = false;
+  numButtons = 0;
+  numKnobs = 0;
+  numSwitches = 0;
+}
+
+void BypassEffect::processEffect(int16_t * effectBuffer) {
+}
+
 
 LostInSpaceEffect::LostInSpaceEffect() {
   strcpy(effectName, "Lost in Space");
+  usesSynthMidi = false;
   
   numButtons = 1;
   char label[] = "1234";
@@ -81,9 +96,13 @@ LostInSpaceEffect::LostInSpaceEffect() {
   setSwitchLabel(0, label);
 }
 
+void LostInSpaceEffect::processEffect(int16_t * effectBuffer) {
+}
+
 
 TemporalCollapseEffect::TemporalCollapseEffect() {
   strcpy(effectName, "Temporal Collapse");
+  usesSynthMidi = false;
   
   numButtons = 2;
   char label[] = "1234";
@@ -125,13 +144,29 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
   setSwitchLabel(1, label);
 }
 
+void TemporalCollapseEffect::processEffect(int16_t * effectBuffer) {
+  Serial.println("Here");
+  for (int i = 0; i < 128; i++) {
+/*    int16_t nextVolume = effectBuffer[i];
+
+    float saturatedVoltage = (float)nextVolume / 32768.0 * 10.0;
+
+    saturatedVoltage = (2.f / PI) * atan(saturatedVoltage);
+
+    nextVolume = (int)(saturatedVoltage * 32768);
+    effectBuffer[i] = nextVolume;*/
+    effectBuffer[i] /= 2;
+
+  }
+}
+
 
 void Patch::setPatchName(char * patchName) {
   this->patchName[MAX_PATCH_NAME_LENGTH] = 0;
   memcpy(this->patchName, patchName, MAX_PATCH_NAME_LENGTH);
 }
 
-void Patch::setEffect(int effectNumber, Effect effect) {
+void Patch::setEffect(int effectNumber, Effect * effect) {
   if (effectNumber < 0 || effectNumber >= NUM_EFFECTS) {
     return;
   }
