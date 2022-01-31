@@ -1,4 +1,5 @@
 #include "AudioEngine.h"
+#include "TftGui.h"
 
 
 void setup() {

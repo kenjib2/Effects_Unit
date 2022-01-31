@@ -4,7 +4,14 @@
 #include "TftGui.h"
 
 
-DisplayPanel::DisplayPanel(ST7735_t3 &tft)
+Window::Window(ST7735_t3 &tft) 
+  : tft(tft)
+//  , patchPanel(tft)
+//  , controlsPanel(tft)
+{
+}
+
+/*DisplayPanel::DisplayPanel(ST7735_t3 &tft)
 : tft(tft) {
 }
 
@@ -213,7 +220,7 @@ void Window::initDisplay() {
 void Window::createTestData() {
     // TEST DATA
   char patchName[] = "123456789012345678";
-  strcpy(patchName, "Return Of The Jedi");
+  strcpy(patchName, "Dark Neutron Star");
   Patch * patch = new Patch();
   patch->setPatchName(patchName);
 
@@ -236,4 +243,4 @@ Patch Window::getPatch() {
 
 Effect Window::getEffect(int effectNumber) {
   return *(patchPanel.patch->effects[effectNumber]);
-}
+}*/

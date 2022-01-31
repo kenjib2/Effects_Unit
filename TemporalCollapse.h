@@ -2,8 +2,8 @@
 #include "patch.h"
 
 
-class SubtractiveSynthEffect: public Effect {
+class TemporalCollapseEffect: public Effect {
   public:
-    SubtractiveSynthEffect();
+    TemporalCollapseEffect();
     void processEffect(int16_t * effectBuffer);
 };

@@ -1,6 +1,5 @@
 #include <ST7735_t3.h>
 #include "Patch.h"
-#include "SubtractiveSynthEffect.h"
 
 
 const int FONT_SIZE = 1;
@@ -18,6 +17,26 @@ const int SELECTED_TEXT_BLUE = 255;
 const int COLOR_TEXT_SELECTED = 0xFFFF;
 
 
+class Window {
+  private:
+    ST7735_t3 &tft;
+//    PatchPanel patchPanel;
+//    ControlsPanel controlsPanel;
+
+  public:
+    Window(ST7735_t3 &tft);
+/*    void render();
+    void invalidate();
+    void scrollDown();
+    void scrollUp();
+    void select();
+    void initDisplay();
+    void createTestData();
+    Patch getPatch();
+    Effect getEffect(int effectNumber);*/
+};
+
+/*
 class DisplayPanel {
   private:
     bool needsRefresh;
@@ -82,3 +101,4 @@ class Window {
     Patch getPatch();
     Effect getEffect(int effectNumber);
 };
+*/
