@@ -1,3 +1,4 @@
+#pragma once
 #include <Audio.h>
 
 const int CTRL_LABEL_LENGTH = 4;

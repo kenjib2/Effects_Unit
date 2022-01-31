@@ -1,7 +1,8 @@
 #include <Audio.h>
 
-void initializeAudioEngine(usb_midi_class usbMIDIControl);
-void processAudioEngine(usb_midi_class usbMIDIControl);
+void initAudioEngine(usb_midi_class usbMIDIControl);
+void processMidi(usb_midi_class usbMIDIControl);
+void processAudioEngine();
 void keyBuff(byte note, bool playNote);
 void vcoTrigger(byte note, bool triggerEnvelope);
 void vcoStop();

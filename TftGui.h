@@ -1,5 +1,6 @@
 #include <ST7735_t3.h>
 #include "Patch.h"
+#include "EffectSubclasses.h"
 
 
 const int FONT_SIZE = 1;
@@ -17,26 +18,6 @@ const int SELECTED_TEXT_BLUE = 255;
 const int COLOR_TEXT_SELECTED = 0xFFFF;
 
 
-class Window {
-  private:
-    ST7735_t3 &tft;
-//    PatchPanel patchPanel;
-//    ControlsPanel controlsPanel;
-
-  public:
-    Window(ST7735_t3 &tft);
-/*    void render();
-    void invalidate();
-    void scrollDown();
-    void scrollUp();
-    void select();
-    void initDisplay();
-    void createTestData();
-    Patch getPatch();
-    Effect getEffect(int effectNumber);*/
-};
-
-/*
 class DisplayPanel {
   private:
     bool needsRefresh;
@@ -52,15 +33,6 @@ class DisplayPanel {
 };
 
 
-class ControlsPanel: public DisplayPanel {
-  public:
-    using DisplayPanel::DisplayPanel;
-    Effect *effect;
-
-    void doRender(int xPos, int yPos, int width, int height);
-};
-
-
 class PatchPanel: public DisplayPanel {
   public:
     using DisplayPanel::DisplayPanel;
@@ -69,10 +41,42 @@ class PatchPanel: public DisplayPanel {
     int selectedEffect = 0;
     int selection = 0;
 
-    Effect * getSelectedEffect();
+    Effect *getSelectedEffect();
     void decrementSelect();
     void incrementSelect();
     bool select(); // returns true if you need to invalidate all
+    void doRender(int xPos, int yPos, int width, int height);
+};
+
+
+class Window {
+  private:
+    ST7735_t3 &tft;
+    PatchPanel patchPanel;
+//    ControlsPanel controlsPanel;
+
+  public:
+    Window(ST7735_t3 &tft);
+
+    void initDisplay();
+    void createTestData();
+    void render();
+    void invalidate();
+/*    void scrollDown();
+    void scrollUp();
+    void select();*/
+    Patch * getPatch();
+    Effect * getEffect(int effectNumber);
+    
+};
+
+
+/*
+class ControlsPanel: public DisplayPanel {
+  public:
+    using DisplayPanel::DisplayPanel;
+    Effect *effect;
+
     void doRender(int xPos, int yPos, int width, int height);
 };
 
@@ -83,22 +87,4 @@ class FilePanel: public DisplayPanel {
 };
 
 
-class Window {
-  private:
-    ST7735_t3 &tft;
-    PatchPanel patchPanel;
-    ControlsPanel controlsPanel;
-
-  public:
-    Window(ST7735_t3 &tft);
-    void render();
-    void invalidate();
-    void scrollDown();
-    void scrollUp();
-    void select();
-    void initDisplay();
-    void createTestData();
-    Patch getPatch();
-    Effect getEffect(int effectNumber);
-};
 */

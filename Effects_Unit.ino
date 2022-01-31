@@ -1,31 +1,13 @@
+//#include <ST7735_t3.h>
+//#include <SPI.h>
+//#include "Patch.h"
 #include "AudioEngine.h"
 #include "TftGui.h"
 
 
-void setup() {
-  Serial.begin(9600);
-  initializeAudioEngine(usbMIDI);
-}
-
-void loop() {
-  static int i = 0;
-  i++;
-  if (i == 1000) {
-    i = 0;
-    Serial.printf("Usage: memory %d / processor %f\n", AudioMemoryUsageMax(), AudioProcessorUsageMax());
-  }
-  
-  usbMIDI.read();
-
-  processAudioEngine(usbMIDI);
-}
-
-/*
-#include <ST7735_t3.h>
-#include <SPI.h>
-#include "TftGui.h"
-#include "Patch.h"
-//#include "AudioEngine.h"
+//const int PIN_ENCODER_A = 16;
+//const int PIN_ENCODER_B = 17;
+//const int PIN_ENCODER_CLICK = 22;
 
 
 const int PIN_DISPLAY_CLK = 13;
@@ -45,33 +27,33 @@ const int PIN_DISPLAY_DC = 20;
 const int PIN_DISPLAY_RST = 255;  // 255 = unused, connect to 3.3V
 const int PIN_DISPLAY_CS = 21;*/
 
-//const int PIN_ENCODER_A = 16;
-//const int PIN_ENCODER_B = 17;
-//const int PIN_ENCODER_CLICK = 22;
 
-/*
 ST7735_t3 tft = ST7735_t3(PIN_DISPLAY_CS, PIN_DISPLAY_DC, PIN_DISPLAY_MOSI, PIN_DISPLAY_CLK, PIN_DISPLAY_RST);
 Window window(tft);
 
 
 void setup() {
   Serial.begin(9600);
-
+  
 //  pinMode(PIN_ENCODER_A, INPUT_PULLUP);
 //  pinMode(PIN_ENCODER_B, INPUT_PULLUP);
 //  pinMode(PIN_ENCODER_CLICK, INPUT_PULLUP);
 
+  initAudioEngine(usbMIDI);
+
   window.initDisplay();
   window.createTestData();
   window.invalidate();
-
-//  initSynthEngine(usbMIDI);
-//  initAudioEngine();
 }
 
-
 void loop() {
-//  loopA();
+  static int i = 0;
+  i++;
+  if (i == 1000) {
+    i = 0;
+    Serial.printf("Usage: memory %d / processor %f\n", AudioMemoryUsageMax(), AudioProcessorUsageMax());
+  }  
+
 /*  static bool encoderALast = LOW;
   
   bool encoderA = digitalRead(PIN_ENCODER_A);
@@ -86,17 +68,15 @@ void loop() {
 
   if (digitalRead(PIN_ENCODER_CLICK) == LOW) {
     window.select();
-  }
-
+  }*/
+  
   window.render();
 
-  Effect effect1 = window.getEffect(0);
-  Effect effect2 = window.getEffect(1);
-*/  
-//  if (effect1.usesSynthMidi) {
-//    usbMIDI.read();
-//  }
-
+  Effect *effect1 = window.getEffect(0);
+  Effect *effect2 = window.getEffect(1);
+  if (effect1->usesSynthMidi) {
+    processMidi(usbMIDI);
+  }  
+  processAudioEngine();
 //  processAudio(effect1, effect2);
-//  processAudio();
-//}
+}

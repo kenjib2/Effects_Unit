@@ -85,7 +85,7 @@ float bendFactor = 1;
 int bendRange = 12;
 
 
-void initializeAudioEngine(usb_midi_class usbMIDIControl) {
+void initAudioEngine(usb_midi_class usbMIDIControl) {
   AudioMemory(1024);
 
   synthMixer.gain(0, 1.0);
@@ -100,7 +100,7 @@ void initializeAudioEngine(usb_midi_class usbMIDIControl) {
   usbMIDIControl.setHandlePitchChange(midiPitchBend);
 
   sgtl5000_1.enable();
-  sgtl5000_1.volume(0.32);
+  sgtl5000_1.volume(0.70);
 
   vco1.begin(WAVEFORM_SAWTOOTH);
   vco1.amplitude(0.75);
@@ -154,7 +154,11 @@ void initializeAudioEngine(usb_midi_class usbMIDIControl) {
   lfo.pulseWidth(0.5);
 }
 
-void processAudioEngine(usb_midi_class usbMIDIControl) {
+void processMidi(usb_midi_class usbMIDIControl) {
+  usbMIDIControl.read();
+}
+
+void processAudioEngine() {
   if (effect1In.available() >= 1) {
     int16_t *audioBuffer = effect1Out.getBuffer();
     memcpy(audioBuffer, effect1In.readBuffer(), 256);

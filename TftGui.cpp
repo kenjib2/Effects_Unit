@@ -6,12 +6,57 @@
 
 Window::Window(ST7735_t3 &tft) 
   : tft(tft)
-//  , patchPanel(tft)
+  , patchPanel(tft)
 //  , controlsPanel(tft)
 {
 }
 
-/*DisplayPanel::DisplayPanel(ST7735_t3 &tft)
+void Window::initDisplay() {
+  tft.initR(INITR_BLACKTAB);
+  tft.setRotation(1);
+
+  tft.fillScreen(ST7735_BLACK);
+  tft.setTextSize(FONT_SIZE);
+}
+
+void Window::createTestData() {
+    // TEST DATA
+  Patch * patch = new Patch();
+  patch->setPatchName("Dark Neutron Star");
+
+  SubtractiveSynthEffect *effect0 = new SubtractiveSynthEffect();
+  patch->setEffect(0, effect0);
+
+  TemporalCollapseEffect *effect1 = new TemporalCollapseEffect();
+  patch->setEffect(1, effect1);
+
+  patchPanel.patch = patch;
+
+  int selectedEffect = 0;
+  patchPanel.selectedEffect = selectedEffect;
+//  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
+}
+
+void Window::render() {
+  patchPanel.render(0, 0, 160, 64);
+//  controlsPanel.render(0, 64, 160, 64);
+}
+
+void Window::invalidate() {
+  patchPanel.invalidate();
+//  controlsPanel.invalidate();
+}
+
+Patch * Window::getPatch() {
+  return patchPanel.patch;
+}
+
+Effect * Window::getEffect(int effectNumber) {
+  return patchPanel.patch->effects[effectNumber];
+}
+
+
+DisplayPanel::DisplayPanel(ST7735_t3 &tft)
 : tft(tft) {
 }
 
@@ -27,41 +72,6 @@ void DisplayPanel::render(int xPos, int yPos, int width, int height) {
 }
 
 
-void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
-  // Background and Border
-  tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
-  tft.drawRect(xPos, yPos, width, height, COLOR_BORDER);
-
-  // Buttons labels
-  tft.setTextColor(COLOR_TEXT);
-  for (int i = 0; i < effect->numButtons; i++) {
-    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + i * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
-        yPos + DISPLAY_PANEL_MARGIN
-        );
-    tft.print(effect->buttonLabels[i]);
-  }
-
-  // Knob labels
-  for (int i = 0; i < effect->numKnobs; i++) {
-    int row = i / CTRL_PER_ROW;
-    int column = i % CTRL_PER_ROW;
-    
-    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + column * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
-        yPos + DISPLAY_PANEL_MARGIN + (row + 1) * LINE_HEIGHT + SPACER_SIZE
-        );
-    tft.print(effect->knobLabels[i]);
-  }
-
-  // Switch labels
-  for (int i = 0; i < effect->numSwitches; i++) {
-    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + CTRL_PER_ROW * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2) + SPACER_SIZE,
-        yPos + DISPLAY_PANEL_MARGIN + SPACER_SIZE + i * 3 * LINE_HEIGHT
-        );
-    tft.print(effect->switchLabels[i]);
-  }
-}
-
-
 Effect * PatchPanel::getSelectedEffect() {
   return patch->effects[selectedEffect];
 }
@@ -69,13 +79,13 @@ Effect * PatchPanel::getSelectedEffect() {
 void PatchPanel::decrementSelect() {
   selection -= 1;
   if (selection < 0) {
-    selection += NUM_EFFECTS + 5;
+    selection += NUM_EFFECTS + 5; // +5 To account for patch name, new, rename, save, and delete
   }
   invalidate();
 }
 
 void PatchPanel::incrementSelect() {
-  selection = (selection + 1) % (NUM_EFFECTS + 5);
+  selection = (selection + 1) % (NUM_EFFECTS + 5); // +5 to account for patch name, new, rename, save, and delete
   invalidate();
 }
 
@@ -83,7 +93,7 @@ void PatchPanel::incrementSelect() {
 bool PatchPanel::select() {
   if (selection == 0) {
   } else if (selection <= NUM_EFFECTS) {
-    selectedEffect = selection - 1;
+    selectedEffect = selection - 1; // -1 to account for patch name.
     invalidate();
     return true;
   } else if (selection == NUM_EFFECTS + 1) {
@@ -177,22 +187,43 @@ void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
-Window::Window(ST7735_t3 &tft) 
-  : tft(tft)
-  , patchPanel(tft)
-  , controlsPanel(tft)
-{
+/*
+
+
+void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
+  // Background and Border
+  tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
+  tft.drawRect(xPos, yPos, width, height, COLOR_BORDER);
+
+  // Buttons labels
+  tft.setTextColor(COLOR_TEXT);
+  for (int i = 0; i < effect->numButtons; i++) {
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + i * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
+        yPos + DISPLAY_PANEL_MARGIN
+        );
+    tft.print(effect->buttonLabels[i]);
+  }
+
+  // Knob labels
+  for (int i = 0; i < effect->numKnobs; i++) {
+    int row = i / CTRL_PER_ROW;
+    int column = i % CTRL_PER_ROW;
+    
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + column * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2),
+        yPos + DISPLAY_PANEL_MARGIN + (row + 1) * LINE_HEIGHT + SPACER_SIZE
+        );
+    tft.print(effect->knobLabels[i]);
+  }
+
+  // Switch labels
+  for (int i = 0; i < effect->numSwitches; i++) {
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + CTRL_PER_ROW * FONT_WIDTH * (CTRL_LABEL_LENGTH + 2) + SPACER_SIZE,
+        yPos + DISPLAY_PANEL_MARGIN + SPACER_SIZE + i * 3 * LINE_HEIGHT
+        );
+    tft.print(effect->switchLabels[i]);
+  }
 }
 
-void Window::render() {
-  patchPanel.render(0, 0, 160, 64);
-  controlsPanel.render(0, 64, 160, 64);
-}
-
-void Window::invalidate() {
-  controlsPanel.invalidate();
-  patchPanel.invalidate();
-}
 
 void Window::scrollDown() {
   patchPanel.incrementSelect();
@@ -209,38 +240,4 @@ void Window::select() {
   }
 }
 
-void Window::initDisplay() {
-  tft.initR(INITR_BLACKTAB);
-//  tft.setRotation(1);
-
-//  tft.fillScreen(ST7735_WHITE);
-//  tft.setTextSize(FONT_SIZE);
-}
-
-void Window::createTestData() {
-    // TEST DATA
-  char patchName[] = "123456789012345678";
-  strcpy(patchName, "Dark Neutron Star");
-  Patch * patch = new Patch();
-  patch->setPatchName(patchName);
-
-  SubtractiveSynthEffect *effect0 = new SubtractiveSynthEffect();
-  patch->setEffect(0, effect0);
-
-  TemporalCollapseEffect *effect1 = new TemporalCollapseEffect();
-  patch->setEffect(1, effect1);
-
-  patchPanel.patch = patch;
-
-  int selectedEffect = 0;
-  patchPanel.selectedEffect = selectedEffect;
-  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
-}
-
-Patch Window::getPatch() {
-  return *(patchPanel.patch);
-}
-
-Effect Window::getEffect(int effectNumber) {
-  return *(patchPanel.patch->effects[effectNumber]);
-}*/
+*/
