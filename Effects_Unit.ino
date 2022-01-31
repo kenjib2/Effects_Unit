@@ -2,10 +2,20 @@
 
 
 void setup() {
+  Serial.begin(9600);
   initializeAudioEngine(usbMIDI);
 }
 
 void loop() {
+  static int i = 0;
+  i++;
+  if (i == 1000) {
+    i = 0;
+    Serial.printf("Usage: memory %d / processor %f\n", AudioMemoryUsageMax(), AudioProcessorUsageMax());
+  }
+  
+  usbMIDI.read();
+
   processAudioEngine(usbMIDI);
 }
 

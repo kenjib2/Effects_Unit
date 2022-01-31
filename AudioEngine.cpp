@@ -6,56 +6,60 @@
 #include <SD.h>
 #include <SerialFlash.h>
 
-#include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <SD.h>
-#include <SerialFlash.h>
-
 // GUItool: begin automatically generated code
+AudioInputI2S            i2s1;           //xy=104,67
 AudioSynthWaveformDc     envelopeDc;     //xy=124,657
 AudioSynthWaveformDc     vcoPulseWidth;  //xy=134,411
 AudioMixer4              vcoModMixer;    //xy=150,346
+AudioRecordQueue         effect1In;         //xy=252,68
 AudioEffectEnvelope      envelope;       //xy=282,658
 AudioSynthNoisePink      pinkNoise;      //xy=304,459
 AudioSynthWaveformModulated vco1;           //xy=305,352
 AudioSynthWaveformModulated vco2;           //xy=307,406
+AudioPlayQueue           effect1Out;         //xy=389,67
 AudioMixer4              vcoMixer;       //xy=446,405
 AudioMixer4              vcfModMixer;         //xy=504,483
 AudioFilterLadder        vcf;            //xy=590,401
+AudioMixer4              synthMixer;         //xy=599,62
 AudioSynthWaveform       lfo;            //xy=604,660
 AudioEffectMultiply      vca;            //xy=730,462
 AudioEffectEnvelope      vcaPassThroughEnvelope; //xy=733,324
+AudioRecordQueue         effect2In;         //xy=744,62
 AudioSynthWaveformDc     vcaLfoDcOffset;            //xy=781,660
 AudioMixer4              vcaMixer;       //xy=844,399
+AudioPlayQueue           effect2Out;         //xy=870,61
 AudioMixer4              vcaLfoAmount;         //xy=897,546
 AudioEffectMultiply      vcaLfoMod;      //xy=991,397
-AudioOutputI2S           audioOut;       //xy=1138,397
-AudioConnection          patchCord1(envelopeDc, envelope);
-AudioConnection          patchCord2(vcoPulseWidth, 0, vco1, 1);
-AudioConnection          patchCord3(vcoPulseWidth, 0, vco2, 1);
-AudioConnection          patchCord4(vcoModMixer, 0, vco1, 0);
-AudioConnection          patchCord5(vcoModMixer, 0, vco2, 0);
-AudioConnection          patchCord6(envelope, 0, vca, 1);
-AudioConnection          patchCord7(envelope, 0, vcoModMixer, 0);
-AudioConnection          patchCord8(envelope, 0, vcfModMixer, 0);
-AudioConnection          patchCord9(pinkNoise, 0, vcoMixer, 2);
-AudioConnection          patchCord10(vco1, 0, vcoMixer, 0);
-AudioConnection          patchCord11(vco2, 0, vcoMixer, 1);
-AudioConnection          patchCord12(vcoMixer, 0, vcf, 0);
-AudioConnection          patchCord13(vcfModMixer, 0, vcf, 1);
-AudioConnection          patchCord14(vcf, vcaPassThroughEnvelope);
-AudioConnection          patchCord15(vcf, 0, vca, 0);
-AudioConnection          patchCord16(lfo, 0, vcaLfoAmount, 0);
-AudioConnection          patchCord17(lfo, 0, vcoModMixer, 1);
-AudioConnection          patchCord18(lfo, 0, vcfModMixer, 1);
-AudioConnection          patchCord19(vca, 0, vcaMixer, 1);
-AudioConnection          patchCord20(vcaPassThroughEnvelope, 0, vcaMixer, 0);
-AudioConnection          patchCord21(vcaLfoDcOffset, 0, vcaLfoAmount, 1);
-AudioConnection          patchCord22(vcaMixer, 0, vcaLfoMod, 0);
-AudioConnection          patchCord23(vcaLfoAmount, 0, vcaLfoMod, 1);
-AudioConnection          patchCord24(vcaLfoMod, 0, audioOut, 0);
-AudioConnection          patchCord25(vcaLfoMod, 0, audioOut, 1);
+AudioOutputI2S           audioOut;           //xy=1039,62
+AudioConnection          patchCord1(i2s1, 0, effect1In, 0);
+AudioConnection          patchCord2(envelopeDc, envelope);
+AudioConnection          patchCord3(vcoPulseWidth, 0, vco1, 1);
+AudioConnection          patchCord4(vcoPulseWidth, 0, vco2, 1);
+AudioConnection          patchCord5(vcoModMixer, 0, vco1, 0);
+AudioConnection          patchCord6(vcoModMixer, 0, vco2, 0);
+AudioConnection          patchCord7(envelope, 0, vca, 1);
+AudioConnection          patchCord8(envelope, 0, vcoModMixer, 0);
+AudioConnection          patchCord9(envelope, 0, vcfModMixer, 0);
+AudioConnection          patchCord10(pinkNoise, 0, vcoMixer, 2);
+AudioConnection          patchCord11(vco1, 0, vcoMixer, 0);
+AudioConnection          patchCord12(vco2, 0, vcoMixer, 1);
+AudioConnection          patchCord13(effect1Out, 0, synthMixer, 0);
+AudioConnection          patchCord14(vcoMixer, 0, vcf, 0);
+AudioConnection          patchCord15(vcfModMixer, 0, vcf, 1);
+AudioConnection          patchCord16(vcf, vcaPassThroughEnvelope);
+AudioConnection          patchCord17(vcf, 0, vca, 0);
+AudioConnection          patchCord18(synthMixer, effect2In);
+AudioConnection          patchCord19(lfo, 0, vcaLfoAmount, 0);
+AudioConnection          patchCord20(lfo, 0, vcoModMixer, 1);
+AudioConnection          patchCord21(lfo, 0, vcfModMixer, 1);
+AudioConnection          patchCord22(vca, 0, vcaMixer, 1);
+AudioConnection          patchCord23(vcaPassThroughEnvelope, 0, vcaMixer, 0);
+AudioConnection          patchCord24(vcaLfoDcOffset, 0, vcaLfoAmount, 1);
+AudioConnection          patchCord25(vcaMixer, 0, vcaLfoMod, 0);
+AudioConnection          patchCord26(effect2Out, 0, audioOut, 0);
+AudioConnection          patchCord27(effect2Out, 0, audioOut, 1);
+AudioConnection          patchCord28(vcaLfoAmount, 0, vcaLfoMod, 1);
+AudioConnection          patchCord29(vcaLfoMod, 0, synthMixer, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=1081,659
 // GUItool: end automatically generated code
 
@@ -82,7 +86,13 @@ int bendRange = 12;
 
 
 void initializeAudioEngine(usb_midi_class usbMIDIControl) {
-  AudioMemory(20);
+  AudioMemory(1024);
+
+  synthMixer.gain(0, 1.0);
+  synthMixer.gain(1, 1.0);
+
+  effect1In.begin();
+  effect2In.begin();
 
   usbMIDIControl.setHandleControlChange(myControlChange);
   usbMIDIControl.setHandleNoteOff(myNoteOff);
@@ -145,7 +155,21 @@ void initializeAudioEngine(usb_midi_class usbMIDIControl) {
 }
 
 void processAudioEngine(usb_midi_class usbMIDIControl) {
-  usbMIDIControl.read();
+  if (effect1In.available() >= 1) {
+    int16_t *audioBuffer = effect1Out.getBuffer();
+    memcpy(audioBuffer, effect1In.readBuffer(), 256);
+    effect1In.freeBuffer();
+//    effect2.processEffect(audioBuffer);
+    effect1Out.playBuffer();
+  }
+
+  if (effect2In.available() >= 1) {
+    int16_t *audioBuffer = effect2Out.getBuffer();
+    memcpy(audioBuffer, effect2In.readBuffer(), 256);
+    effect2In.freeBuffer();
+//    effect2.processEffect(audioBuffer);
+    effect2Out.playBuffer();
+  }
 }
 
 void bufferNote(byte note, bool playNote) {
