@@ -49,29 +49,6 @@ class PatchPanel: public DisplayPanel {
 };
 
 
-class Window {
-  private:
-    ST7735_t3 &tft;
-    PatchPanel patchPanel;
-//    ControlsPanel controlsPanel;
-
-  public:
-    Window(ST7735_t3 &tft);
-
-    void initDisplay();
-    void createTestData();
-    void render();
-    void invalidate();
-/*    void scrollDown();
-    void scrollUp();
-    void select();*/
-    Patch * getPatch();
-    Effect * getEffect(int effectNumber);
-    
-};
-
-
-/*
 class ControlsPanel: public DisplayPanel {
   public:
     using DisplayPanel::DisplayPanel;
@@ -87,4 +64,23 @@ class FilePanel: public DisplayPanel {
 };
 
 
-*/
+class Window {
+  private:
+    ST7735_t3 &tft;
+    PatchPanel patchPanel;
+    ControlsPanel controlsPanel;
+
+  public:
+    Window(ST7735_t3 &tft);
+
+    void initDisplay();
+    void createTestData();
+    void render();
+    void invalidate();
+/*    void scrollDown();
+    void scrollUp();
+    void select();*/
+    Patch * getPatch();
+    Effect * getEffect(int effectNumber);
+    
+};

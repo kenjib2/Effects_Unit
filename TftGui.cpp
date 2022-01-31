@@ -7,7 +7,7 @@
 Window::Window(ST7735_t3 &tft) 
   : tft(tft)
   , patchPanel(tft)
-//  , controlsPanel(tft)
+  , controlsPanel(tft)
 {
 }
 
@@ -20,7 +20,6 @@ void Window::initDisplay() {
 }
 
 void Window::createTestData() {
-    // TEST DATA
   Patch * patch = new Patch();
   patch->setPatchName("Dark Neutron Star");
 
@@ -34,17 +33,17 @@ void Window::createTestData() {
 
   int selectedEffect = 0;
   patchPanel.selectedEffect = selectedEffect;
-//  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
+  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
 }
 
 void Window::render() {
   patchPanel.render(0, 0, 160, 64);
-//  controlsPanel.render(0, 64, 160, 64);
+  controlsPanel.render(0, 64, 160, 64);
 }
 
 void Window::invalidate() {
   patchPanel.invalidate();
-//  controlsPanel.invalidate();
+  controlsPanel.invalidate();
 }
 
 Patch * Window::getPatch() {
@@ -187,9 +186,6 @@ void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
-/*
-
-
 void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
   // Background and Border
   tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
@@ -223,6 +219,9 @@ void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
     tft.print(effect->switchLabels[i]);
   }
 }
+
+
+/*
 
 
 void Window::scrollDown() {

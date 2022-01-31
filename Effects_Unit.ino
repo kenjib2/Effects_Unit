@@ -73,7 +73,7 @@ void loop() {
   window.render();
 
   Effect *effect1 = window.getEffect(0);
-  Effect *effect2 = window.getEffect(1);
+//  Effect *effect2 = window.getEffect(1);
   if (effect1->usesSynthMidi) {
     processMidi(usbMIDI);
   }  
