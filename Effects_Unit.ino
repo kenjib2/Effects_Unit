@@ -1,6 +1,3 @@
-//#include <ST7735_t3.h>
-//#include <SPI.h>
-//#include "Patch.h"
 #include "AudioEngine.h"
 #include "TftGui.h"
 
@@ -73,10 +70,9 @@ void loop() {
   window.render();
 
   Effect *effect1 = window.getEffect(0);
-//  Effect *effect2 = window.getEffect(1);
+  Effect *effect2 = window.getEffect(1);
   if (effect1->usesSynthMidi) {
     processMidi(usbMIDI);
   }  
-  processAudioEngine();
-//  processAudio(effect1, effect2);
+  processAudioEngine(effect1, effect2);
 }

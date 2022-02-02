@@ -30,16 +30,15 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
 }
 
 void TemporalCollapseEffect::processEffect(int16_t * effectBuffer) {
-  Serial.println("Here");
   for (int i = 0; i < 128; i++) {
-/*    int16_t nextVolume = effectBuffer[i];
+    int16_t nextVoltage = effectBuffer[i];
 
-    float saturatedVoltage = (float)nextVolume / 32768.0 * 10.0;
+    float saturatedVoltage = (float)nextVoltage / 32768.0 * 10.0;
 
     saturatedVoltage = (2.f / PI) * atan(saturatedVoltage);
 
-    nextVolume = (int)(saturatedVoltage * 32768);
-    effectBuffer[i] = nextVolume;
-/*    effectBuffer[i] /= 2;*/
+    nextVoltage = (int)(saturatedVoltage * 32768 / 2);
+    
+    effectBuffer[i] = nextVoltage;
   }
 }

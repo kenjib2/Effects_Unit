@@ -1,3 +1,4 @@
+//#include <SPI.h>
 #include <ST7735_t3.h>
 #include "Patch.h"
 #include "EffectSubclasses.h"

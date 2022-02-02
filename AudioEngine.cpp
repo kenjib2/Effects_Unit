@@ -158,12 +158,12 @@ void processMidi(usb_midi_class usbMIDIControl) {
   usbMIDIControl.read();
 }
 
-void processAudioEngine() {
+void processAudioEngine(Effect * effect1, Effect * effect2) {
   if (effect1In.available() >= 1) {
     int16_t *audioBuffer = effect1Out.getBuffer();
     memcpy(audioBuffer, effect1In.readBuffer(), 256);
     effect1In.freeBuffer();
-//    effect2.processEffect(audioBuffer);
+    effect1->processEffect(audioBuffer);
     effect1Out.playBuffer();
   }
 
@@ -171,7 +171,7 @@ void processAudioEngine() {
     int16_t *audioBuffer = effect2Out.getBuffer();
     memcpy(audioBuffer, effect2In.readBuffer(), 256);
     effect2In.freeBuffer();
-//    effect2.processEffect(audioBuffer);
+    effect2->processEffect(audioBuffer);
     effect2Out.playBuffer();
   }
 }

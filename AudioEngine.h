@@ -1,8 +1,10 @@
 #include <Audio.h>
+#include "patch.h"
+
 
 void initAudioEngine(usb_midi_class usbMIDIControl);
 void processMidi(usb_midi_class usbMIDIControl);
-void processAudioEngine();
+void processAudioEngine(Effect * effect1, Effect * effect2);
 void keyBuff(byte note, bool playNote);
 void vcoTrigger(byte note, bool triggerEnvelope);
 void vcoStop();
