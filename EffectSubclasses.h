@@ -1,3 +1,4 @@
 #include "LostInSpaceEffect.h"
 #include "SubtractiveSynthEffect.h"
-#include "TemporalCollapse.h"
+#include "TemporalCollapseEffect.h"
+#include "TheFullRackEffect.h"

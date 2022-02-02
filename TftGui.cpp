@@ -26,7 +26,7 @@ void Window::createTestData() {
   SubtractiveSynthEffect *effect0 = new SubtractiveSynthEffect();
   patch->setEffect(0, effect0);
 
-  TemporalCollapseEffect *effect1 = new TemporalCollapseEffect();
+  TheFullRackEffect *effect1 = new TheFullRackEffect();
   patch->setEffect(1, effect1);
 
   patchPanel.patch = patch;

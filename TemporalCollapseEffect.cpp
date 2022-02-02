@@ -1,4 +1,4 @@
-#include "TemporalCollapse.h"
+#include "TemporalCollapseEffect.h"
 
 
 TemporalCollapseEffect::TemporalCollapseEffect() {

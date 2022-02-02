@@ -119,7 +119,7 @@ void initAudioEngine(usb_midi_class usbMIDIControl) {
 
   vcoMixer.gain(0, 1.0);
   vcoMixer.gain(1, 1.0);
-  vcoMixer.gain(2, 1.0);
+  vcoMixer.gain(2, 0.0);
 
   vcf.resonance(Q_FLOOR);
   vcf.frequency(MAX_FILTER_FREQ);
