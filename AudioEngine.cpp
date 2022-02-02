@@ -120,6 +120,7 @@ const float MAX_LFO_FREQ = 12.0;
 
 
 // GLOBAL VARIABLES
+SynthMode synthMode;
 byte globalNote = 0;
 int octave = 0;
 float detuneFactor = 1;
@@ -151,6 +152,9 @@ void initAudioEngine(usb_midi_class usbMIDIControl) {
 
   sgtl5000_1.enable();
   sgtl5000_1.volume(0.70);
+
+//  synthMode = LastNotePriority;
+  synthMode = Monophonic;
 
   vcoPlaying[0] = false;
   vcoPlaying[1] = false;
@@ -261,6 +265,11 @@ void processAudioEngine(Effect * effect1, Effect * effect2) {
   }
 }
 
+void setSynthMode(SynthMode mode) {
+  vcoStopAllNotes();
+  synthMode = mode;
+}
+
 int getNextOscillator() {
   for (int i = 0; i < NUM_VOICES; i++) {
     if (!vcoPlaying[i]) {
@@ -272,34 +281,65 @@ int getNextOscillator() {
 }
 
 void addBufferNote(MidiNote midiNote) {
-  /*
-   * Need to add mono mode
-      if (buffSize < MAX_BUFFER) {
-   */
-  if (notesBuffered >= NUM_VOICES) {
-    removeBufferNote(noteBuffer[0]);    
+  if (synthMode == Monophonic) {
+    if (notesBuffered < MAX_BUFFER) {
+      midiNote.vcoNumber = 0;
+      vcoTrigger(midiNote);
+      envelopeTrigger(midiNote);
+      noteBuffer[notesBuffered] = midiNote;
+      notesBuffered++;
+    }
+
+  } else { // Polyphonic
+    if (notesBuffered >= NUM_VOICES) {
+      removeBufferNote(noteBuffer[0]);    
+    }
+    int nextVcoNumber = getNextOscillator();
+    vcoPlaying[midiNote.vcoNumber] = true;
+    midiNote.vcoNumber = nextVcoNumber;
+    noteBuffer[notesBuffered] = midiNote;
+    notesBuffered++;
+    vcoTrigger(midiNote);
+    envelopeTrigger(midiNote);
   }
-  int nextVcoNumber = getNextOscillator();
-  vcoPlaying[midiNote.vcoNumber] = true;
-  midiNote.vcoNumber = nextVcoNumber;
-  noteBuffer[notesBuffered] = midiNote;
-  notesBuffered++;
-  vcoTrigger(midiNote);
-  envelopeTrigger(midiNote);
 }
 
 void removeBufferNote(MidiNote midiNote) {
-  if (notesBuffered > 0) {
-    for (int i = 0; i < notesBuffered; i++) {
-      if (noteBuffer[i].note == midiNote.note) {
-        MidiNote removedNote = noteBuffer[i];
-        for (int j = i; j < notesBuffered - 1; j++) {
-          // Shift all notes down to replace the removed note
-          noteBuffer[j] = noteBuffer[j + 1];
+  if (synthMode == Monophonic) {
+    if (notesBuffered != 0) {
+      for (int i = 0; i < notesBuffered; i++) {
+        if (noteBuffer[i].note == midiNote.note) {
+          MidiNote removedNote = noteBuffer[i];
+          for (int j = i; j < (notesBuffered - 1); j++) {
+            noteBuffer[j] = noteBuffer[j + 1];
+          }
+          notesBuffered--;
+          if (notesBuffered != 0) {
+            vcoTrigger(noteBuffer[notesBuffered - 1]);
+            return;
+          }
+          else {
+            vcoStop(removedNote);
+            return;
+          }
         }
-        vcoStop(removedNote);
-        vcoPlaying[removedNote.vcoNumber] = false;
-        notesBuffered--;
+      }
+    }
+  
+  } else { // Polyphonic
+    if (notesBuffered > 0) {
+      for (int i = 0; i < notesBuffered; i++) {
+        if (noteBuffer[i].note == midiNote.note) {
+          MidiNote removedNote = noteBuffer[i];
+          for (int j = i; j < notesBuffered - 1; j++) {
+            // Shift all notes down to replace the removed note
+            noteBuffer[j] = noteBuffer[j + 1];
+          }
+          vcoStop(removedNote);
+          vcoPlaying[removedNote.vcoNumber] = false;
+          notesBuffered--;
+          return;
+        }
       }
     }
   }
@@ -348,6 +388,12 @@ void vcoStop(MidiNote midiNote) {
       envelope_2.noteOff();
       vcaPassThroughEnvelope_2.noteOff();
       break;
+  }
+}
+
+void vcoStopAllNotes() {
+  for (int i = 0; i < notesBuffered; i++) {
+    removeBufferNote(noteBuffer[0]);
   }
 }
 
