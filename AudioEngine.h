@@ -2,12 +2,22 @@
 #include "patch.h"
 
 
+typedef struct _MidiNote {
+  byte note;
+  byte velocity;
+  byte channel;
+  byte vcoNumber;
+} MidiNote;
+
+
 void initAudioEngine(usb_midi_class usbMIDIControl);
 void processMidi(usb_midi_class usbMIDIControl);
 void processAudioEngine(Effect * effect1, Effect * effect2);
-void keyBuff(byte note, bool playNote);
-void vcoTrigger(byte note, bool triggerEnvelope);
-void vcoStop();
+void addBufferNote(MidiNote midiNote);
+void removeBufferNote(MidiNote midiNote);
+void vcoTrigger(MidiNote midiNote);
+void envelopeTrigger(MidiNote midiNote);
+void vcoStop(MidiNote midiNote);
 void vcoUpdateFrequency();
 void midiNoteOn(byte channel, byte note, byte velocity);
 void midiNoteOff(byte channel, byte note, byte velocity);

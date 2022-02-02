@@ -42,7 +42,7 @@ TheFullRackEffect::TheFullRackEffect() {
   reverb = true;
   revModel = new revmodel();
   revModel->init(sampleRate);
-  revModel->setdamp(0.20);
+  revModel->setdamp(0.10);
   revModel->setwidth(0.0);
   revModel->setroomsize(0.40);
   reverbWet = 0.3;
