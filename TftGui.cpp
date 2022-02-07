@@ -221,9 +221,6 @@ void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
-/*
-
-
 void Window::scrollDown() {
   patchPanel.incrementSelect();
 }
@@ -238,5 +235,3 @@ void Window::select() {
     invalidate();
   }
 }
-
-*/

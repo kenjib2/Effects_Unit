@@ -19,6 +19,9 @@ enum SynthMode {
 void initAudioEngine(usb_midi_class usbMIDIControl);
 void processMidi(usb_midi_class usbMIDIControl);
 void processAudioEngine(Effect * effect1, Effect * effect2);
+void setKnob(int knobNumber, short value);
+
+
 void setSynthMode(SynthMode mode);
 void addBufferNote(MidiNote midiNote);
 void removeBufferNote(MidiNote midiNote);

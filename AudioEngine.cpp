@@ -1,5 +1,6 @@
 #include "AudioEngine.h"
 
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -8,15 +9,15 @@
 
 // GUItool: begin automatically generated code
 AudioSynthWaveform       lfo;            //xy=55,1217.75
-AudioInputI2S            i2s1;           //xy=117,65
+AudioInputI2S            audioIn;           //xy=117,65
 AudioSynthWaveformDc     vcoPulseWidth_6; //xy=208,2010
 AudioSynthWaveformDc     vcoPulseWidth_1;  //xy=215,355
 AudioSynthWaveformDc     vcoPulseWidth_5; //xy=210,1682
 AudioSynthWaveformDc     vcoPulseWidth_4; //xy=212,1358
+AudioMixer4              vcoModMixer_1;    //xy=218,240
 AudioSynthWaveformDc     vcoPulseWidth_3; //xy=215,1032
 AudioSynthWaveformDc     vcoPulseWidth_2; //xy=220,708
 AudioMixer4              vcoModMixer_6; //xy=224,1945
-AudioMixer4              vcoModMixer_1;    //xy=231,290
 AudioMixer4              vcoModMixer_5; //xy=226,1617
 AudioMixer4              vcoModMixer_4; //xy=228,1293
 AudioMixer4              vcoModMixer_3; //xy=231,967
@@ -131,7 +132,7 @@ AudioConnection          patchCord15(lfo, 0, vcfModMixer_5, 1);
 AudioConnection          patchCord16(lfo, 0, vcoModMixer_6, 1);
 AudioConnection          patchCord17(lfo, 0, vcfModMixer_6, 1);
 AudioConnection          patchCord18(lfo, 0, vcaLfoAmount_6, 0);
-AudioConnection          patchCord19(i2s1, 0, effect1In, 0);
+AudioConnection          patchCord19(audioIn, 0, effect1In, 0);
 AudioConnection          patchCord20(vcoPulseWidth_6, 0, vco1_6, 1);
 AudioConnection          patchCord21(vcoPulseWidth_6, 0, vco2_6, 1);
 AudioConnection          patchCord22(vcoPulseWidth_1, 0, vco1_1, 1);
@@ -140,14 +141,14 @@ AudioConnection          patchCord24(vcoPulseWidth_5, 0, vco1_5, 1);
 AudioConnection          patchCord25(vcoPulseWidth_5, 0, vco2_5, 1);
 AudioConnection          patchCord26(vcoPulseWidth_4, 0, vco1_4, 1);
 AudioConnection          patchCord27(vcoPulseWidth_4, 0, vco2_4, 1);
-AudioConnection          patchCord28(vcoPulseWidth_3, 0, vco1_3, 1);
-AudioConnection          patchCord29(vcoPulseWidth_3, 0, vco2_3, 1);
-AudioConnection          patchCord30(vcoPulseWidth_2, 0, vco1_2, 1);
-AudioConnection          patchCord31(vcoPulseWidth_2, 0, vco2_2, 1);
-AudioConnection          patchCord32(vcoModMixer_6, 0, vco1_6, 0);
-AudioConnection          patchCord33(vcoModMixer_6, 0, vco2_6, 0);
-AudioConnection          patchCord34(vcoModMixer_1, 0, vco1_1, 0);
-AudioConnection          patchCord35(vcoModMixer_1, 0, vco2_1, 0);
+AudioConnection          patchCord28(vcoModMixer_1, 0, vco1_1, 0);
+AudioConnection          patchCord29(vcoModMixer_1, 0, vco2_1, 0);
+AudioConnection          patchCord30(vcoPulseWidth_3, 0, vco1_3, 1);
+AudioConnection          patchCord31(vcoPulseWidth_3, 0, vco2_3, 1);
+AudioConnection          patchCord32(vcoPulseWidth_2, 0, vco1_2, 1);
+AudioConnection          patchCord33(vcoPulseWidth_2, 0, vco2_2, 1);
+AudioConnection          patchCord34(vcoModMixer_6, 0, vco1_6, 0);
+AudioConnection          patchCord35(vcoModMixer_6, 0, vco2_6, 0);
 AudioConnection          patchCord36(vcoModMixer_5, 0, vco1_5, 0);
 AudioConnection          patchCord37(vcoModMixer_5, 0, vco2_5, 0);
 AudioConnection          patchCord38(vcoModMixer_4, 0, vco1_4, 0);
@@ -242,8 +243,8 @@ AudioConnection          patchCord126(vca_5, 0, vcaMixer_5, 1);
 AudioConnection          patchCord127(vca_4, 0, vcaMixer_4, 1);
 AudioConnection          patchCord128(vca_3, 0, vcaMixer_3, 1);
 AudioConnection          patchCord129(vca_2, 0, vcaMixer_2, 1);
-AudioConnection          patchCord130(effect2Out, 0, audioOut, 0);
-AudioConnection          patchCord131(effect2Out, 0, audioOut, 1);
+AudioConnection          patchCord130(effect2Out, 0, audioOut, 1);
+AudioConnection          patchCord131(effect2Out, 0, audioOut, 0);
 AudioConnection          patchCord132(vcaMixer_6, 0, vcaLfoMod_6, 0);
 AudioConnection          patchCord133(vcaMixer_1, 0, vcaLfoMod_1, 0);
 AudioConnection          patchCord134(vcaMixer_5, 0, vcaLfoMod_5, 0);
@@ -279,7 +280,7 @@ const float Q_RATIO = 1.2;
 const float Q_FLOOR = 0.0;
 const float MIN_LFO_FREQ = 0.1;
 const float MAX_LFO_FREQ = 12.0;
-const int MAX_ENVELOPE_MS = 3000;
+const int MAX_ENVELOPE_MS = 5000;
 
 
 // GLOBAL VARIABLES
@@ -297,28 +298,27 @@ bool vcoPlaying[NUM_VOICES];
 void initAudioEngine(usb_midi_class usbMIDIControl) {
   AudioMemory(1024);
 
+  sgtl5000_1.enable();
+  sgtl5000_1.volume(0.80);
+  sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
+
   synthMixer.gain(0, 1.0);
   synthMixer.gain(1, 1.0);
   synthMixer.gain(2, 1.0);
+  synthMixer.gain(3, 1.0);
 
-  synthPolyphony_1.gain(0, 0.8);
-  synthPolyphony_1.gain(1, 0.8);
-  synthPolyphony_1.gain(2, 0.8);
+  synthPolyphony_1.gain(0, 0.3);
+  synthPolyphony_1.gain(1, 0.3);
+  synthPolyphony_1.gain(2, 0.3);
 
-  synthPolyphony_2.gain(0, 0.8);
-  synthPolyphony_2.gain(1, 0.8);
-  synthPolyphony_2.gain(2, 0.8);
-
-  effect1In.begin();
-  effect2In.begin();
+  synthPolyphony_2.gain(0, 0.3);
+  synthPolyphony_2.gain(1, 0.3);
+  synthPolyphony_2.gain(2, 0.3);
 
   usbMIDIControl.setHandleControlChange(midiControlChange);
   usbMIDIControl.setHandleNoteOff(midiNoteOff);
   usbMIDIControl.setHandleNoteOn(midiNoteOn);
   usbMIDIControl.setHandlePitchChange(midiPitchBend);
-
-  sgtl5000_1.enable();
-  sgtl5000_1.volume(0.70);
 
   synthMode = LastNotePriority;
 
@@ -535,6 +535,10 @@ void initAudioEngine(usb_midi_class usbMIDIControl) {
   lfo.amplitude(1.0);
   lfo.frequency(1.0);
   lfo.pulseWidth(0.5);
+
+  // Calls to AudioRecordQueue.being must always be last in this function to avoid latency.
+  effect1In.begin();
+  effect2In.begin();
 }
 
 void processMidi(usb_midi_class usbMIDIControl) {
@@ -543,6 +547,12 @@ void processMidi(usb_midi_class usbMIDIControl) {
 
 void processAudioEngine(Effect * effect1, Effect * effect2) {
   if (effect1In.available() >= 1) {
+    while (effect1In.available() > 1) {
+      Serial.print("Samples dropped. Buffers available: ");
+      Serial.println(effect1In.available());
+      effect1In.readBuffer();
+      effect1In.freeBuffer();
+    }
     int16_t *audioBuffer = effect1Out.getBuffer();
     memcpy(audioBuffer, effect1In.readBuffer(), 256);
     effect1In.freeBuffer();
@@ -551,6 +561,10 @@ void processAudioEngine(Effect * effect1, Effect * effect2) {
   }
 
   if (effect2In.available() >= 1) {
+    while (effect2In.available() > 1) {
+      effect2In.readBuffer();
+      effect2In.freeBuffer();
+    }
     int16_t *audioBuffer = effect2Out.getBuffer();
     memcpy(audioBuffer, effect2In.readBuffer(), 256);
     effect2In.freeBuffer();

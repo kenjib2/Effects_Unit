@@ -78,9 +78,9 @@ class Window {
     void createTestData();
     void render();
     void invalidate();
-/*    void scrollDown();
+    void scrollDown();
     void scrollUp();
-    void select();*/
+    void select();
     Patch * getPatch();
     Effect * getEffect(int effectNumber);
     

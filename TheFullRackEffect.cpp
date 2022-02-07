@@ -3,6 +3,7 @@
 
 const float DIV127 = (1.0 / 127.0);
 const float sampleRate = 44100.0;
+AudioEffectReverb reverb = 
 
 
 TheFullRackEffect::TheFullRackEffect() {
@@ -32,8 +33,8 @@ TheFullRackEffect::TheFullRackEffect() {
   setSwitchLabel(0, "Tmpo");
 
   distortion = true;
-  gain = 2.0;
-  level = 127;
+  gain = 6.0;
+  level = 90;
 
   chorus = true;
 
@@ -44,8 +45,8 @@ TheFullRackEffect::TheFullRackEffect() {
   revModel->init(sampleRate);
   revModel->setdamp(0.10);
   revModel->setwidth(0.0);
-  revModel->setroomsize(0.40);
-  reverbWet = 0.3;
+  revModel->setroomsize(0.60);
+  reverbWet = 0.4;
   reverbDry = 1.0;
 }
 
