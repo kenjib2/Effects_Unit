@@ -1,3 +1,8 @@
+#ifndef OscNoise_H
+#define OscNoise_H
+
+#include "Math.h"
+
 /*
 	==============================================================================
 	This file is part of Tal-NoiseMaker by Patrick Kunz.
@@ -21,27 +26,34 @@
 	==============================================================================
  */
 
-#if !defined(__DCBlock_h)
-#define __DCBlock_h
+#include <cstdlib>
 
-class DCBlock 
+class OscNoise
 {
- public:
-  float inputs, outputs, lastOutput, vsa;
+public:
+    int randSeed;
 
-  DCBlock() 
-  {
-    lastOutput = inputs = outputs = 0.0f;
-    vsa= 0.0000001f;   // Very small amount (Denormal Fix)
-  }
+    OscNoise(float sampleRate) 
+    {
+        resetOsc();
+    }
 
-  inline void tick(float *sample, float cutoff) 
-  {
-    outputs     = *sample-inputs+(0.999f-cutoff*0.4f)*outputs;
-    inputs      = *sample+vsa;
-    lastOutput  = outputs;
-    *sample     = lastOutput;
-  }
+    void resetOsc() 
+    {
+        randSeed = 1;
+    }
+
+    inline float getNextSample() 
+    {
+        randSeed *= 16807;
+        //return (float)(randSeed &  0x7FFFFFFF) * 4.6566129e-010f; // 0..1
+        return (float)randSeed * 4.6566129e-010f;
+    }
+
+	inline float getNextSamplePositive() 
+	{
+        randSeed *= 16807;
+        return (float)(randSeed &  0x7FFFFFFF) * 4.6566129e-010f;
+	}
 };
-
 #endif

@@ -1082,7 +1082,6 @@ void midiControlChange(byte channel, byte control, byte value) {
     case 118:
       // Attack
       floatVal = scaleLinToExp(MAX_ENVELOPE_MS * (value * DIV127) + 1, 1, MAX_ENVELOPE_MS + 1);
-      Serial.println(floatVal);
       envelope_1.attack((int)floatVal);
       envelope_2.attack((int)floatVal);
       envelope_3.attack((int)floatVal);

@@ -2,7 +2,7 @@
 
 
 const float DIV127 = (1.0 / 127.0);
-const float sampleRate = 44100.0;
+const float sampleRate = 44100.0f;
 
 
 TheFullRackEffect::TheFullRackEffect() {
@@ -31,11 +31,20 @@ TheFullRackEffect::TheFullRackEffect() {
   numSwitches = 1;
   setSwitchLabel(0, "Tmpo");
 
-  distortion = true;
-  gain = 4.0;
-  level = 90;
+  distortion = false;
+  distortionEffect = new Distortion();
+  distortionEffect->gain = 4.0f;
+  distortionEffect->level = 0.8f;
 
   chorus = true;
+  chorusEngine = new MonoChorusEngine(sampleRate);
+  chorusEngine->setEnablesChorus(false, true);
+  chorusEngine->chorus1->lfo->phase = 1.0f;
+  chorusEngine->chorus1->rate = 0.5f;
+  chorusEngine->chorus1->delayTime = 7.0f;
+  chorusEngine->chorus2->lfo->phase = 0.0f;
+  chorusEngine->chorus2->rate = 0.83f;
+  chorusEngine->chorus2->delayTime = 7.0f;
 
   delay = true;
   delayEffect = new Delay();
@@ -48,9 +57,9 @@ TheFullRackEffect::TheFullRackEffect() {
   reverb = true;
   revModel = new revmodel();
   revModel->init(sampleRate);
-  revModel->setdamp(0.20);
+  revModel->setdamp(0.25);
   revModel->setwidth(0.0);
-  revModel->setroomsize(0.70);
+  revModel->setroomsize(0.60);
   reverbWet = 0.6;
   reverbDry = 1.0;
 }
@@ -58,6 +67,8 @@ TheFullRackEffect::TheFullRackEffect() {
 TheFullRackEffect::~TheFullRackEffect() {
   delete revModel;
   delete delayEffect;
+  delete chorusEngine;
+  delete distortionEffect;
 }
 
 void TheFullRackEffect::processEffect(int16_t * effectBuffer) {
@@ -65,9 +76,13 @@ void TheFullRackEffect::processEffect(int16_t * effectBuffer) {
     int16_t nextSample = effectBuffer[i];
 
     if (distortion) {
-      float saturatedSample = (float)nextSample / 32768.0 * gain;
-      saturatedSample = (2.f / PI) * atan(saturatedSample);
-      nextSample = (int)(saturatedSample * 32768 * (level * DIV127));
+      nextSample = distortionEffect->processSample(nextSample);
+    }
+
+    if (chorus) {
+        float floatSample= (float)nextSample;
+        chorusEngine->process(&floatSample);
+        nextSample = floatSample;
     }
 
     if (delay) {

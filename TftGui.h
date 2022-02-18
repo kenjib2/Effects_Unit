@@ -1,7 +1,7 @@
 //#include <SPI.h>
 #include <ST7735_t3.h>
-#include "Patch.h"
-#include "EffectSubclasses.h"
+#include "src/patch/Patch.h"
+#include "src/patch/EffectSubclasses.h"
 
 
 const int FONT_SIZE = 1;

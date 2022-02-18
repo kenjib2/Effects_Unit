@@ -1,7 +1,9 @@
 #include <Audio.h>
 #include "patch.h"
-#include "src/freeverb/revmodel.hpp"
-#include "src/delay/delay.h"
+#include "../freeverb/revmodel.hpp"
+#include "../delay/delay.h"
+#include "../chorus/MonoChorusEngine.h"
+#include "../fx/Distortion.h"
 
 
 class TheFullRackEffect: public Effect {
@@ -15,12 +17,11 @@ class TheFullRackEffect: public Effect {
     bool chorus;
     bool delay;
     bool reverb;
-    revmodel* revModel;
+    Distortion* distortionEffect;
+    MonoChorusEngine* chorusEngine;
     Delay* delayEffect;
+    revmodel* revModel;
     
-    float gain; // Range from 0.0 to 10.0
-    int level; // Range from 0 to 127
-
     float reverbWet; // 0.0 to 1.0
     float reverbDry; // 0.0 to 1.0
 };

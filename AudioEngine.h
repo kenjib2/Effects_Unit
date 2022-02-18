@@ -1,5 +1,5 @@
 #include <Audio.h>
-#include "patch.h"
+#include "src/patch/patch.h"
 
 
 typedef struct _MidiNote {
