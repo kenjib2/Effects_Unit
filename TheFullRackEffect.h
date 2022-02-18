@@ -1,7 +1,7 @@
 #include <Audio.h>
 #include "patch.h"
 #include "src/freeverb/revmodel.hpp"
-#include "delay.h"
+#include "src/delay/delay.h"
 
 
 class TheFullRackEffect: public Effect {
