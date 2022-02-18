@@ -1,4 +1,5 @@
 #include "AudioEngine.h"
+#include "Util.h"
 
 
 #include <Audio.h>
@@ -274,12 +275,13 @@ const byte NUM_VOICES = 6; // Number of polyphony voices
 const float noteFreqs[128] = {8.176, 8.662, 9.177, 9.723, 10.301, 10.913, 11.562, 12.25, 12.978, 13.75, 14.568, 15.434, 16.352, 17.324, 18.354, 19.445, 20.602, 21.827, 23.125, 24.5, 25.957, 27.5, 29.135, 30.868, 32.703, 34.648, 36.708, 38.891, 41.203, 43.654, 46.249, 48.999, 51.913, 55, 58.27, 61.735, 65.406, 69.296, 73.416, 77.782, 82.407, 87.307, 92.499, 97.999, 103.826, 110, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563, 164.814, 174.614, 184.997, 195.998, 207.652, 220, 233.082, 246.942, 261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995, 415.305, 440, 466.164, 493.883, 523.251, 554.365, 587.33, 622.254, 659.255, 698.456, 739.989, 783.991, 830.609, 880, 932.328, 987.767, 1046.502, 1108.731, 1174.659, 1244.508, 1318.51, 1396.913, 1479.978, 1567.982, 1661.219, 1760, 1864.655, 1975.533, 2093.005, 2217.461, 2349.318, 2489.016, 2637.02, 2793.826, 2959.955, 3135.963, 3322.438, 3520, 3729.31, 3951.066, 4186.009, 4434.922, 4698.636, 4978.032, 5274.041, 5587.652, 5919.911, 6271.927, 6644.875, 7040, 7458.62, 7902.133, 8372.018, 8869.844, 9397.273, 9956.063, 10548.08, 11175.3, 11839.82, 12543.85};
 const float DIV127 = (1.0 / 127.0);
 
-const int MAX_FILTER_FREQ = 10000;
+const int MAX_FILTER_FREQ = 20000;
+const int MIN_FILTER_FREQ = 50;
 const int FILTER_OCTAVE_CONTROL = 4.0;
 const float Q_RATIO = 1.2;
 const float Q_FLOOR = 0.0;
 const float MIN_LFO_FREQ = 0.1;
-const float MAX_LFO_FREQ = 12.0;
+const float MAX_LFO_FREQ = 20.0;
 const int MAX_ENVELOPE_MS = 5000;
 
 
@@ -296,7 +298,7 @@ bool vcoPlaying[NUM_VOICES];
 
 
 void initAudioEngine(usb_midi_class usbMIDIControl) {
-  AudioMemory(1024);
+  AudioMemory(720);
 
   sgtl5000_1.enable();
   sgtl5000_1.volume(0.80);
@@ -975,6 +977,11 @@ void midiControlChange(byte channel, byte control, byte value) {
 
     case 110:
       // VCO Env
+      if (value >= 64) {
+        floatVal = scaleLinToExp(value - 64, 0, 63);
+      } else {
+        floatVal = -scaleLinToExp(abs(value) - 64, 0, 64);
+      }
       vcoModMixer_1.gain(0, (value - 64) * DIV127 * 0.25);
       vcoModMixer_2.gain(0, (value - 64) * DIV127 * 0.25);
       vcoModMixer_3.gain(0, (value - 64) * DIV127 * 0.25);
@@ -985,23 +992,25 @@ void midiControlChange(byte channel, byte control, byte value) {
 
     case 111:
       // VCO LFO
-      vcoModMixer_1.gain(1, 0.25 * value * DIV127);
-      vcoModMixer_2.gain(1, 0.25 * value * DIV127);
-      vcoModMixer_3.gain(1, 0.25 * value * DIV127);
-      vcoModMixer_4.gain(1, 0.25 * value * DIV127);
-      vcoModMixer_5.gain(1, 0.25 * value * DIV127);
-      vcoModMixer_6.gain(1, 0.25 * value * DIV127);
+      floatVal = scaleLinToExp(value, 0, 127);
+      vcoModMixer_1.gain(1, 0.25 * floatVal * DIV127);
+      vcoModMixer_2.gain(1, 0.25 * floatVal * DIV127);
+      vcoModMixer_3.gain(1, 0.25 * floatVal * DIV127);
+      vcoModMixer_4.gain(1, 0.25 * floatVal * DIV127);
+      vcoModMixer_5.gain(1, 0.25 * floatVal * DIV127);
+      vcoModMixer_6.gain(1, 0.25 * floatVal * DIV127);
       break;
 
     // ============================== VCF Controls ==============================
     case 112:
       // VCF Frequency
-      vcf_1.frequency(MAX_FILTER_FREQ * (value * DIV127));
-      vcf_2.frequency(MAX_FILTER_FREQ * (value * DIV127));
-      vcf_3.frequency(MAX_FILTER_FREQ * (value * DIV127));
-      vcf_4.frequency(MAX_FILTER_FREQ * (value * DIV127));
-      vcf_5.frequency(MAX_FILTER_FREQ * (value * DIV127));
-      vcf_6.frequency(MAX_FILTER_FREQ * (value * DIV127));
+      floatVal = scaleLinToExp(value, 0, 127);
+      vcf_1.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
+      vcf_2.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
+      vcf_3.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
+      vcf_4.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
+      vcf_5.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
+      vcf_6.frequency((MAX_FILTER_FREQ - MIN_FILTER_FREQ) * (floatVal * DIV127) + MIN_FILTER_FREQ);
       break;
 
     case 113:
@@ -1072,22 +1081,25 @@ void midiControlChange(byte channel, byte control, byte value) {
     // ============================== Envelope Controls ==============================
     case 118:
       // Attack
-      envelope_1.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
-      envelope_2.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
-      envelope_3.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
-      envelope_4.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
-      envelope_5.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
-      envelope_6.attack(MAX_ENVELOPE_MS * (value * DIV127) + 1);
+      floatVal = scaleLinToExp(MAX_ENVELOPE_MS * (value * DIV127) + 1, 1, MAX_ENVELOPE_MS + 1);
+      Serial.println(floatVal);
+      envelope_1.attack((int)floatVal);
+      envelope_2.attack((int)floatVal);
+      envelope_3.attack((int)floatVal);
+      envelope_4.attack((int)floatVal);
+      envelope_5.attack((int)floatVal);
+      envelope_6.attack((int)floatVal);
       break;
 
     case 119:
       // Decay
-      envelope_1.decay(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_2.decay(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_3.decay(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_4.decay(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_5.decay(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_6.decay(MAX_ENVELOPE_MS * (value * DIV127));
+      floatVal = scaleLinToExp(MAX_ENVELOPE_MS * (value * DIV127), 0, MAX_ENVELOPE_MS);
+      envelope_1.decay((int)floatVal);
+      envelope_2.decay((int)floatVal);
+      envelope_3.decay((int)floatVal);
+      envelope_4.decay((int)floatVal);
+      envelope_5.decay((int)floatVal);
+      envelope_6.decay((int)floatVal);
       break;
 
     case 120:
@@ -1102,18 +1114,20 @@ void midiControlChange(byte channel, byte control, byte value) {
 
     case 121:
       // Release
-      envelope_1.release(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_2.release(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_3.release(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_4.release(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_5.release(MAX_ENVELOPE_MS * (value * DIV127));
-      envelope_6.release(MAX_ENVELOPE_MS * (value * DIV127));
+      floatVal = scaleLinToExp(MAX_ENVELOPE_MS * (value * DIV127), 0, MAX_ENVELOPE_MS);
+      envelope_1.release((int)floatVal);
+      envelope_2.release((int)floatVal);
+      envelope_3.release((int)floatVal);
+      envelope_4.release((int)floatVal);
+      envelope_5.release((int)floatVal);
+      envelope_6.release((int)floatVal);
       break;
 
     // ============================== LFO Controls ==============================
     case 122:
       // LFO Rate
-      lfo.frequency((MAX_LFO_FREQ - MIN_LFO_FREQ) * (value * DIV127) + MIN_LFO_FREQ);
+      floatVal = scaleLinToExp(value, 0, 127);
+      lfo.frequency((MAX_LFO_FREQ - MIN_LFO_FREQ) * (floatVal * DIV127) + MIN_LFO_FREQ);
       break;
 
     case 123:

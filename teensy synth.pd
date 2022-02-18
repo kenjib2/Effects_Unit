@@ -1,4 +1,4 @@
-#N canvas 506 160 1017 742 12;
+#N canvas 8 63 1017 787 12;
 #X obj 856 406 midiout;
 #X obj 36 22 vsl 15 128 0 127 0 0 empty empty Osc\\\ 1 -7 -9 0 10 #fcfcfc
 #000000 #000000 0 1;
@@ -84,6 +84,12 @@
 #X obj 337 534 ctlout 119;
 #X obj 389 506 ctlout 120;
 #X obj 445 535 ctlout 121;
+#X obj 785 616 noteout 1;
+#X msg 753 455 60;
+#X obj 762 402 t b;
+#X obj 759 344 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 740 544 makenote 127 200, f 19;
 #X connect 1 0 6 0;
 #X connect 2 0 5 0;
 #X connect 3 0 4 0;
@@ -124,3 +130,8 @@
 #X connect 41 0 52 0;
 #X connect 42 0 43 0;
 #X connect 43 0 51 0;
+#X connect 64 0 67 0;
+#X connect 65 0 64 0;
+#X connect 66 0 65 0;
+#X connect 67 0 63 0;
+#X connect 67 1 63 1;

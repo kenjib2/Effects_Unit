@@ -1,6 +1,7 @@
 #include "AudioEngine.h"
 #include "TftGui.h"
 #include "TeensyPins.h"
+#include "Util.h"
 
 
 ST7735_t3 tft = ST7735_t3(PIN_DISPLAY_CS, PIN_DISPLAY_DC, PIN_DISPLAY_MOSI, PIN_DISPLAY_CLK, PIN_DISPLAY_RST);

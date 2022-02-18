@@ -1,11 +1,13 @@
 #include <Audio.h>
 #include "patch.h"
-#include "revmodel.hpp"
+#include "src/freeverb/revmodel.hpp"
+#include "delay.h"
 
 
 class TheFullRackEffect: public Effect {
   public:
     TheFullRackEffect();
+    ~TheFullRackEffect();
     void processEffect(int16_t * effectBuffer);
 
   private:
@@ -14,6 +16,7 @@ class TheFullRackEffect: public Effect {
     bool delay;
     bool reverb;
     revmodel* revModel;
+    Delay* delayEffect;
     
     float gain; // Range from 0.0 to 10.0
     int level; // Range from 0 to 127
