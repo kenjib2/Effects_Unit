@@ -1,9 +1,9 @@
 #include <Audio.h>
-#include "patch.h"
+#include "../../patch.h"
 
 
 class SubtractiveSynthEffect: public Effect {
   public:
     SubtractiveSynthEffect();
-    void processEffect(int16_t * effectBuffer);
+    void processEffect(int16_t * effectBuffer) override;
 };

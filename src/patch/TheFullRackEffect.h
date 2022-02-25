@@ -1,7 +1,7 @@
 #include <Audio.h>
-#include "patch.h"
+#include "../../patch.h"
 #include "../freeverb/revmodel.hpp"
-#include "../delay/delay.h"
+#include "../delay/Delay.h"
 #include "../chorus/MonoChorusEngine.h"
 #include "../fx/Distortion.h"
 
@@ -9,8 +9,8 @@
 class TheFullRackEffect: public Effect {
   public:
     TheFullRackEffect();
-    ~TheFullRackEffect();
-    void processEffect(int16_t * effectBuffer);
+    ~TheFullRackEffect() override;
+    void processEffect(int16_t * effectBuffer) override;
 
   private:
     bool distortion;

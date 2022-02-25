@@ -20,7 +20,7 @@ AudioSynthWaveformDc     vcoPulseWidth_3; //xy=215,1032
 AudioSynthWaveformDc     vcoPulseWidth_2; //xy=220,708
 AudioMixer4              vcoModMixer_6; //xy=224,1945
 AudioMixer4              vcoModMixer_5; //xy=226,1617
-AudioMixer4              vcoModMixer_4; //xy=228,1293
+AudioMixer4              vcoModMixer_4; //xy=228,1293   
 AudioMixer4              vcoModMixer_3; //xy=231,967
 AudioMixer4              vcoModMixer_2; //xy=236,643
 AudioRecordQueue         effect1In;      //xy=265,66
@@ -298,10 +298,10 @@ bool vcoPlaying[NUM_VOICES];
 
 
 void initAudioEngine(usb_midi_class usbMIDIControl) {
-  AudioMemory(720);
+  AudioMemory(60);
 
   sgtl5000_1.enable();
-  sgtl5000_1.volume(0.80);
+  sgtl5000_1.volume(0.70);
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
 
   synthMixer.gain(0, 1.0);

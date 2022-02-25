@@ -1,3 +1,5 @@
+#pragma once
+
 class Distortion {
 public:
     float gain; // Range from 0.0 to 10.0

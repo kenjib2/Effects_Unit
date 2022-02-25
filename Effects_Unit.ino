@@ -25,13 +25,17 @@ word getPotReading(int potIndex) {
 
 
 void pollInput() {
+  static bool encoderALast = LOW;
+  static int encoderButtonLastState = HIGH;
+  static int encoderButtonState;
+  static int lastDebounceTime = 0;
+  
 /*  for(int i = 0; i < 6; i++) {
     Serial.printf("Potentiometer %d: %d\n", i + 1, getPotReading(i));
   }
   Serial.printf("Potentiometer DIRECT: %d\n", analogRead(25));*/
 
-  static bool encoderALast = LOW;
-  
+  // Read encoder rotation
   bool encoderA = digitalRead(PIN_ENCODER_A);
   if ((encoderALast == HIGH) && (encoderA == LOW)) {
     if (digitalRead(PIN_ENCODER_B)) {
@@ -42,9 +46,22 @@ void pollInput() {
   }
   encoderALast = encoderA;
 
-  if (digitalRead(PIN_ENCODER_CLICK) == LOW) {
-    window.select();
+  // Read encoder button debounced
+  int reading = digitalRead(PIN_ENCODER_CLICK);
+  if (reading != encoderButtonLastState) {
+    lastDebounceTime = millis();
   }
+
+  if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    if (reading != encoderButtonState) {
+      encoderButtonState = reading;
+
+      if (encoderButtonState == LOW) {
+        window.select();
+      }
+    }
+  }
+  encoderButtonLastState = reading;
 }
 
 

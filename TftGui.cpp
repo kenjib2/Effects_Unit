@@ -2,16 +2,19 @@
 #include <ST7735_t3.h>
 #include <SPI.h>
 #include "TftGui.h"
+#include "EffectFactory.h"
 
 
 Window::Window(ST7735_t3 &tft) 
   : tft(tft)
   , patchPanel(tft)
   , controlsPanel(tft)
+  , effectSelectPanel(tft)
 {
 }
 
 void Window::initDisplay() {
+  inputState = EFFECT_CONTROL;
   tft.initR(INITR_BLACKTAB);
   tft.setRotation(1);
 
@@ -23,11 +26,9 @@ void Window::createTestData() {
   Patch * patch = new Patch();
   patch->setPatchName("Dark Neutron Star");
 
-  SubtractiveSynthEffect *effect0 = new SubtractiveSynthEffect();
-  patch->setEffect(0, effect0);
-
-  TheFullRackEffect *effect1 = new TheFullRackEffect();
-  patch->setEffect(1, effect1);
+  patch->setEffect(0, "Subtractive Synth");
+//  patch->setEffect(1, "Repeater");
+  patch->setEffect(1, "Rhythmic Delay");
 
   patchPanel.patch = patch;
 
@@ -39,6 +40,9 @@ void Window::createTestData() {
 void Window::render() {
   patchPanel.render(0, 0, 160, 64);
   controlsPanel.render(0, 64, 160, 64);
+  if (inputState == EFFECT_SELECT) {
+    effectSelectPanel.render(20, 10, 120, 108);
+  }
 }
 
 void Window::invalidate() {
@@ -76,6 +80,7 @@ Effect * PatchPanel::getSelectedEffect() {
 }
 
 void PatchPanel::decrementSelect() {
+  
   selection -= 1;
   if (selection < 0) {
     selection += NUM_EFFECTS + 5; // +5 To account for patch name, new, rename, save, and delete
@@ -86,22 +91,6 @@ void PatchPanel::decrementSelect() {
 void PatchPanel::incrementSelect() {
   selection = (selection + 1) % (NUM_EFFECTS + 5); // +5 to account for patch name, new, rename, save, and delete
   invalidate();
-}
-
-// returns true if you need to invalidate all
-bool PatchPanel::select() {
-  if (selection == 0) {
-  } else if (selection <= NUM_EFFECTS) {
-    selectedEffect = selection - 1; // -1 to account for patch name.
-    invalidate();
-    return true;
-  } else if (selection == NUM_EFFECTS + 1) {
-  } else if (selection == NUM_EFFECTS + 2) {
-  } else if (selection == NUM_EFFECTS + 3) {
-  } else if (selection == NUM_EFFECTS + 4) {
-  }
-
-  return false;
 }
 
 void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
@@ -221,17 +210,103 @@ void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
+void EffectSelectPanel::decrementSelect() {
+  selection -= 1;
+  if (selection < 0) {
+    selection += effectVector.size();
+  }
+  invalidate();
+}
+
+void EffectSelectPanel::incrementSelect() {
+  selection = (selection + 1) % (effectVector.size());
+  invalidate();
+}
+
+void EffectSelectPanel::doRender(int xPos, int yPos, int width, int height) {
+  // Background and Border
+  tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
+  tft.drawRect(xPos, yPos, width, height, COLOR_BORDER);
+
+  // Effect List
+  int index = 0;
+  for (auto & it : effectVector) {
+    tft.setTextColor(COLOR_TEXT);
+    if (selection == index) {
+      tft.setTextColor(COLOR_TEXT_SELECTED);
+    }
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN, yPos + DISPLAY_PANEL_MARGIN + index * LINE_HEIGHT);
+    tft.print(it.c_str());
+    index++;
+  }
+}
+
+
 void Window::scrollDown() {
-  patchPanel.incrementSelect();
+  switch (inputState) {
+    case EFFECT_CONTROL:
+      patchPanel.incrementSelect();
+      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
+        patchPanel.selectedEffect = patchPanel.selection - 1;
+        controlsPanel.effect = patchPanel.getSelectedEffect();
+        controlsPanel.invalidate();
+      }
+      break;
+    case EFFECT_SELECT:
+      effectSelectPanel.incrementSelect();
+      break;
+    case PATCH_SELECT:
+      break;
+  }
 }
 
 void Window::scrollUp() {
-  patchPanel.decrementSelect();
+  switch (inputState) {
+    case EFFECT_CONTROL:
+      patchPanel.decrementSelect();
+      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
+        patchPanel.selectedEffect = patchPanel.selection - 1;
+        controlsPanel.effect = patchPanel.getSelectedEffect();
+        controlsPanel.invalidate();
+      }
+      break;
+    case EFFECT_SELECT:
+      effectSelectPanel.decrementSelect();
+      break;
+    case PATCH_SELECT:
+      break;
+  }
 }
 
 void Window::select() {
-  if (patchPanel.select()) {
-    controlsPanel.effect = patchPanel.getSelectedEffect();
-    invalidate();
+  switch (inputState) {
+    case EFFECT_CONTROL:
+      if (patchPanel.selection == 0) {
+      } else if (patchPanel.selection <= NUM_EFFECTS) {
+        patchPanel.selectedEffect = patchPanel.selection - 1; // -1 to account for patch name.
+        effectSelectPanel.slot = patchPanel.selectedEffect;
+        if (effectSelectPanel.slot == 0) {
+          effectSelectPanel.effectVector = EffectFactory::getSlot1EffectList();
+        } else {
+          effectSelectPanel.effectVector = EffectFactory::getSlot2EffectList();
+        }
+        effectSelectPanel.selection = 0;
+        effectSelectPanel.invalidate();
+        inputState = EFFECT_SELECT;
+      } else if (patchPanel.selection == NUM_EFFECTS + 1) {
+      } else if (patchPanel.selection == NUM_EFFECTS + 2) {
+      } else if (patchPanel.selection == NUM_EFFECTS + 3) {
+      } else if (patchPanel.selection == NUM_EFFECTS + 4) {
+      }
+      break;
+    case EFFECT_SELECT:
+      patchPanel.patch->setEffect(effectSelectPanel.slot, effectSelectPanel.effectVector[effectSelectPanel.selection]);
+      controlsPanel.effect = patchPanel.patch->effects[effectSelectPanel.slot];
+      inputState = EFFECT_CONTROL;
+      invalidate();
+      break;
+    case PATCH_SELECT:
+      invalidate();
+      break;
   }
 }

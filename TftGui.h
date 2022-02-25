@@ -1,6 +1,8 @@
+#include <string>
+#include <vector>
 //#include <SPI.h>
 #include <ST7735_t3.h>
-#include "src/patch/Patch.h"
+#include "Patch.h"
 #include "src/patch/EffectSubclasses.h"
 
 
@@ -19,6 +21,13 @@ const int SELECTED_TEXT_BLUE = 255;
 const int COLOR_TEXT_SELECTED = 0xFFFF;
 
 
+typedef enum InputState {
+  EFFECT_CONTROL
+  , EFFECT_SELECT
+  , PATCH_SELECT
+} InputState;
+
+
 class DisplayPanel {
   private:
     bool needsRefresh;
@@ -34,6 +43,20 @@ class DisplayPanel {
 };
 
 
+class EffectSelectPanel: public DisplayPanel {
+  public:
+    using DisplayPanel::DisplayPanel;
+
+    int slot = 0;
+    int selection = 0;
+    std::vector<std::string> effectVector;
+
+    void decrementSelect();
+    void incrementSelect();
+    void doRender(int xPos, int yPos, int width, int height) override;
+};
+
+
 class PatchPanel: public DisplayPanel {
   public:
     using DisplayPanel::DisplayPanel;
@@ -45,8 +68,7 @@ class PatchPanel: public DisplayPanel {
     Effect *getSelectedEffect();
     void decrementSelect();
     void incrementSelect();
-    bool select(); // returns true if you need to invalidate all
-    void doRender(int xPos, int yPos, int width, int height);
+    void doRender(int xPos, int yPos, int width, int height) override;
 };
 
 
@@ -55,21 +77,17 @@ class ControlsPanel: public DisplayPanel {
     using DisplayPanel::DisplayPanel;
     Effect *effect;
 
-    void doRender(int xPos, int yPos, int width, int height);
-};
-
-
-class FilePanel: public DisplayPanel {
-  public:
-    using DisplayPanel::DisplayPanel;
+    void doRender(int xPos, int yPos, int width, int height) override;
 };
 
 
 class Window {
   private:
     ST7735_t3 &tft;
+    InputState inputState;
     PatchPanel patchPanel;
     ControlsPanel controlsPanel;
+    EffectSelectPanel effectSelectPanel;
 
   public:
     Window(ST7735_t3 &tft);

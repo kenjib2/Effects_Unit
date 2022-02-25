@@ -3,6 +3,8 @@
 
 Delay::Delay() {
   delayBuffer = new CircularBuffer(MAX_DELAY_BUFFER_SIZE);
+  delayBuffer->numReadIndices = 1;
+  delayBuffer->setDelayLevel(0, 1.0f);
 }
 
 
@@ -12,7 +14,7 @@ Delay::~Delay() {
 
 
 void Delay::setDelayLength(int delaySamples) {
-  delayBuffer->setDelaySize(delaySamples);
+  delayBuffer->setDelaySize(0, delaySamples);
 }
 
 

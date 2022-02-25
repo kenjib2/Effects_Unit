@@ -7,14 +7,14 @@ CircularBuffer::CircularBuffer(int bufferSize)
 }
 
 
-int CircularBuffer::getReverseIndex() {
+int CircularBuffer::getReverseIndex(int indexNumber) {
   return 0;
 }
 
 
 // Need to fix this
 bool CircularBuffer::atLoopStart() {
-  if (readIndex == 0) {
+  if (readIndices[0] == 0) {
     return true;
   }
   return false;
@@ -22,9 +22,11 @@ bool CircularBuffer::atLoopStart() {
 
 
 void CircularBuffer::next() {
-  readIndex++;
-  if (readIndex >= bufferSize) {
-    readIndex -= bufferSize;
+  for (int i = 0; i < numReadIndices; i++) {
+    readIndices[i]++;
+    if (readIndices[i] >= bufferSize) {
+      readIndices[i] -= bufferSize;
+    }
   }
   writeIndex++;
   if (writeIndex >= bufferSize) {
@@ -33,16 +35,16 @@ void CircularBuffer::next() {
 }
 
 
-int16_t CircularBuffer::readNextSample(bool reverse) {
+int16_t CircularBuffer::readNextSample(int indexNumber, bool reverse) {
   // Should the loop start check be for read or write?
-  if (atLoopStart()) {
-    currentLoopSize = delaySize;
-    readIndex = writeIndex - delaySize;
-    while (readIndex < 0) {
-      readIndex += bufferSize;
+/*  if (atLoopStart()) {
+    currentLoopSize = delaySize[indexNumber];
+    readIndices[indexNumber] = writeIndex - delaySize[indexNumber];
+    while (readIndices[indexNumber] < 0) {
+      readIndices[indexNumber] += bufferSize;
     }
-  }
-  return audioBuffer[readIndex];
+  }*/
+  return audioBuffer[readIndices[indexNumber]];
 }
 
 

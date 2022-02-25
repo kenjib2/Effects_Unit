@@ -21,7 +21,7 @@
     ==============================================================================
  */
 
-#if !defined(__ChorusEngine_h)
+#if !defined(__MonoChorusEngine_h)
 #define __MonoChorusEngine_h
 
 #include "Chorus.h"

@@ -1,7 +1,6 @@
 #include "TheFullRackEffect.h"
 
 
-const float DIV127 = (1.0 / 127.0);
 const float sampleRate = 44100.0f;
 
 
@@ -31,9 +30,9 @@ TheFullRackEffect::TheFullRackEffect() {
   numSwitches = 1;
   setSwitchLabel(0, "Tmpo");
 
-  distortion = false;
+  distortion = true;
   distortionEffect = new Distortion();
-  distortionEffect->gain = 4.0f;
+  distortionEffect->gain = 1.5f;
   distortionEffect->level = 0.8f;
 
   chorus = true;
@@ -52,7 +51,7 @@ TheFullRackEffect::TheFullRackEffect() {
   delayEffect->paramReverse = false;
   delayEffect->paramDry = 1.0;
   delayEffect->paramWet = 0.4;
-  delayEffect->paramFeedback = 0.3;
+  delayEffect->paramFeedback = 0.0;
 
   reverb = true;
   revModel = new revmodel();

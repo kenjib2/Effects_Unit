@@ -1,3 +1,4 @@
+#pragma once
 #include "AudioBuffer.h"
 
 
@@ -8,13 +9,13 @@ protected:
   // only be updated at the beginning of each cycle instead of constantly.
   int currentLoopSize;
   
-  int getReverseIndex() override;
+  int getReverseIndex(int indexNumber) override;
   bool atLoopStart() override;
 
 public:
   CircularBuffer(int bufferSize);
 
   void next() override;
-  int16_t readNextSample(bool reverse) override;
+  int16_t readNextSample(int indexNumber, bool reverse) override;
   void writeNextSample(int16_t sample) override;
 };

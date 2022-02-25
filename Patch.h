@@ -1,5 +1,7 @@
 #pragma once
+#include <string>
 #include <Audio.h>
+
 
 const int CTRL_LABEL_LENGTH = 4;
 const int CTRL_PER_ROW = 4;
@@ -23,6 +25,8 @@ class Effect {
     int numSwitches;
     bool usesSynthMidi;
 
+    virtual ~Effect() = default;
+
     void setEffectName(const char * effectName);  
     void setButtonLabel(int buttonNumber, const char * label);
     void setKnobLabel(int knobNumber, const char * label);
@@ -35,7 +39,7 @@ class Effect {
 class BypassEffect: public Effect {
   public:
     BypassEffect();
-    void processEffect(int16_t * effectBuffer);
+    void processEffect(int16_t * effectBuffer) override;
 };
 
 
@@ -45,5 +49,5 @@ class Patch {
     Effect *effects[NUM_EFFECTS];
 
     void setPatchName(const char * patchName);
-    void setEffect(int effectNumber, Effect * effect);
+    void setEffect(int effectNumber, std::string effectName);
 };

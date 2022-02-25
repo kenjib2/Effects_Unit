@@ -1,5 +1,5 @@
-#include <string.h>
 #include "Patch.h"
+#include "EffectFactory.h"
 
 
 void Effect::setEffectName(const char * effectName) {
@@ -41,11 +41,8 @@ void Effect::setSwitchLabel(int switchNumber, const char * label) {
 BypassEffect::BypassEffect() {
   usesSynthMidi = false;
   setEffectName("Bypass");
-
   numButtons = 0;
-
   numKnobs = 0;
-
   numSwitches = 0;
 }
 
@@ -58,10 +55,11 @@ void Patch::setPatchName(const char * patchName) {
   strncpy(this->patchName, patchName, MAX_PATCH_NAME_LENGTH);
 }
 
-void Patch::setEffect(int effectNumber, Effect * effect) {
+void Patch::setEffect(int effectNumber, std::string effectName) {
   if (effectNumber < 0 || effectNumber >= NUM_EFFECTS) {
     return;
   }
 
-  effects[effectNumber] = effect;
+  delete effects[effectNumber];
+  effects[effectNumber] = EffectFactory::createEffect(effectName);
 }
