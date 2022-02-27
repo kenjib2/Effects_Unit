@@ -20,10 +20,10 @@ AudioBuffer::~AudioBuffer() {
 }
 
 
-// aCoefficient goes from 0.f to 1.f. Use a 0.f sampleOut to fade in/out.
-/*int16_t AudioBuffer::crossFade(int16_t sampleA, float aCoefficient, int16_t sampleB) {
+// aCoefficient goes from 0.f to 1.f. Use a 0.f sampleB to fade in/out.
+int16_t AudioBuffer::crossFade(int16_t sampleA, float aCoefficient, int16_t sampleB) {
   return (int16_t)((sampleA * aCoefficient + sampleB * (1.f - aCoefficient)) + 0.5f); // Add 0.5f to round to the nearest whole number
-}*/
+}
 
 
 void AudioBuffer::setDelaySize(int indexNumber, int numSamples) {
@@ -35,8 +35,30 @@ void AudioBuffer::setDelaySize(int indexNumber, int numSamples) {
 }
 
 
+int AudioBuffer::getDelaySize(int indexNumber) {
+    return delaySize[indexNumber];
+}
+
+
 void AudioBuffer::setDelayLevel(int indexNumber, float level) {
     delayLevels[indexNumber] = level;
+}
+
+
+int AudioBuffer::getReadIndex(int indexNumber) {
+    return readIndices[indexNumber];
+}
+
+
+void AudioBuffer::startLatch(int indexNumber) {
+    isLatched = true;
+    isFirstLatch = true;
+    latchSize = delaySize[indexNumber];
+}
+
+
+void AudioBuffer::stopLatch() {
+    isLatched = false;
 }
 
 

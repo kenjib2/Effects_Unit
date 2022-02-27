@@ -1,13 +1,15 @@
 #include <Audio.h>
 #include "../../Patch.h"
 #include "../freeverb/revmodel.hpp"
-#include "../delay/delay.h"
+#include "../delay/MultiTapDelay.h"
 #include "../chorus/MonoChorusEngine.h"
 #include "../fx/Distortion.h"
 
 
 class LostInSpaceEffect: public Effect {
   public:
+    int primaryDelay;
+    float delayLevel;
     LostInSpaceEffect();
     ~LostInSpaceEffect() override;
     void processEffect(int16_t * effectBuffer) override;
@@ -19,7 +21,7 @@ class LostInSpaceEffect: public Effect {
     bool reverb;
     Distortion* distortionEffect;
     MonoChorusEngine* chorusEngine;
-    Delay* delayEffect;
+    MultiTapDelay* delayEffect;
     revmodel* revModel;
 
     float reverbWet; // 0.0 to 1.0

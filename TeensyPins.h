@@ -19,3 +19,6 @@ const int PIN_DISPLAY_MOSI = 11;
 const int PIN_DISPLAY_DC = 24;
 const int PIN_DISPLAY_RST = 25;
 const int PIN_DISPLAY_CS = 26;
+
+// Random Seed
+const int PIN_RANDOM_SEED = A0;

@@ -30,12 +30,7 @@ LostInSpaceEffect::LostInSpaceEffect() {
   setKnobLabel(14, "Driv"); // Drive
 
   numSwitches = 1;
-  setSwitchLabel(0, "Hold"); // Increase decay
-
-  distortion = true;
-  distortionEffect = new Distortion();
-  distortionEffect->gain = 6.0f;
-  distortionEffect->level = 0.4f;
+  setSwitchLabel(0, "Hold"); // Freeze mode on for the reverb
 
   chorus = true;
   chorusEngine = new MonoChorusEngine(sampleRate);
@@ -47,22 +42,46 @@ LostInSpaceEffect::LostInSpaceEffect() {
   chorusEngine->chorus2->rate = 0.83f;
   chorusEngine->chorus2->delayTime = 7.0f;
 
+  // Short reflections are the tap delays?
+  // Long reflections are primary delay and feedback?
+  // Or have a second effect for long reflections...
   delay = true;
-  delayEffect = new Delay();
-  delayEffect->setDelayLength(14000);
-  delayEffect->paramReverse = false;
+  primaryDelay = 15000;
+  delayLevel = 0.6;
+  delayEffect = new MultiTapDelay();
+  delayEffect->setNumTaps(5);
+  delayEffect->setPrimaryDelayLength(primaryDelay);
+  delayEffect->setPrimaryDelayLevel(delayLevel);
+
+  delayEffect->setTapDelayLength(0, primaryDelay / 2);
+  delayEffect->setTapDelayLevel(0, delayLevel);
+  delayEffect->setTapDelayLength(1, primaryDelay / 3);
+  delayEffect->setTapDelayLevel(1, delayLevel);
+  delayEffect->setTapDelayLength(2, primaryDelay * 2 / 3);
+  delayEffect->setTapDelayLevel(2, delayLevel);
+  delayEffect->setTapDelayLength(3, primaryDelay * 3 / 4);
+  delayEffect->setTapDelayLevel(3, delayLevel);
+  delayEffect->setTapDelayLength(4, (int)(primaryDelay * 1.61803399));
+  delayEffect->setTapDelayLevel(4, delayLevel);
+
+  delayEffect->paramReverse = true;
   delayEffect->paramDry = 1.0;
-  delayEffect->paramWet = 0.4;
-  delayEffect->paramFeedback = 0.3;
+  delayEffect->paramWet = 0.6;
+  delayEffect->paramFeedback = 0.5;
+
+  distortion = true;
+  distortionEffect = new Distortion();
+  distortionEffect->gain = 4.0f;
+  distortionEffect->level = 0.8f;
 
   reverb = true;
   revModel = new revmodel();
   revModel->init(sampleRate);
-  revModel->setdamp(0.25);
+  revModel->setdamp(0.15);
   revModel->setwidth(0.0);
-  revModel->setroomsize(0.60);
-  reverbWet = 0.6;
-  reverbDry = 1.0;
+  revModel->setroomsize(0.80);
+  reverbWet = 1.0;
+  reverbDry = 0.8;
 }
 
 LostInSpaceEffect::~LostInSpaceEffect() {
@@ -76,14 +95,15 @@ void LostInSpaceEffect::processEffect(int16_t * effectBuffer) {
     for (int i = 0; i < 128; i++) {
         int16_t nextSample = effectBuffer[i];
 
-        if (distortion) {
-            nextSample = distortionEffect->processSample(nextSample);
-        }
-
         if (chorus) {
             float floatSample = (float)nextSample;
-            chorusEngine->process(&floatSample);
-            nextSample = floatSample;
+            float chorusSample = floatSample;
+            chorusEngine->process(&chorusSample);
+            nextSample = floatSample * 0.8 + chorusSample * 0.2;
+        }
+
+        if (distortion) {
+            nextSample = distortionEffect->processSample(nextSample);
         }
 
         if (delay) {

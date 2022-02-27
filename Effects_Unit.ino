@@ -67,6 +67,7 @@ void pollInput() {
 
 void setup() {
   Serial.begin(9600);
+  randomSeed(analogRead(A0));
   
   pinMode(PIN_ENCODER_A, INPUT_PULLUP);
   pinMode(PIN_ENCODER_B, INPUT_PULLUP);

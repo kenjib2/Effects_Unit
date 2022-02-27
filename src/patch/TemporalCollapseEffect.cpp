@@ -8,7 +8,7 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
   
   numButtons = 2;
   setButtonLabel(0, "Buff");
-  setButtonLabel(1, "Dir");
+  setButtonLabel(1, "Rvrs");
 
   numKnobs = 12;
   setKnobLabel(0, "Dry");
@@ -27,18 +27,30 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
   numSwitches = 2;
   setSwitchLabel(0, "Ltch");
   setSwitchLabel(1, "Tmpo");
+
+  delayEffect = new Delay();
+  delayEffect->setDelayLength(30000);
+  delayEffect->paramReverse = false;
+  delayEffect->paramDry = 1.0;
+  delayEffect->paramWet = 0.6;
+  delayEffect->paramFeedback = 0.4;
+  delayEffect->setLoopLatch(0.5);
+//  delayEffect->paramSensitivity = 30000;
+
+  bitCrusherEffect = new BitCrusher();
+}
+
+TemporalCollapseEffect::~TemporalCollapseEffect() {
+    delete delayEffect;
 }
 
 void TemporalCollapseEffect::processEffect(int16_t * effectBuffer) {
   for (int i = 0; i < 128; i++) {
-    int16_t nextVoltage = effectBuffer[i];
+    int16_t nextSample = effectBuffer[i];
 
-    float saturatedVoltage = (float)nextVoltage / 32768.0 * 10.0;
+    nextSample = delayEffect->processSample(nextSample);
+//    nextSample = bitCrusherEffect->process(nextSample, 14.f, 16.f);
 
-    saturatedVoltage = (2.f / PI) * atan(saturatedVoltage);
-
-    nextVoltage = (int)(saturatedVoltage * 32768 / 2);
-    
-    effectBuffer[i] = nextVoltage;
+    effectBuffer[i] = nextSample;
   }
 }
