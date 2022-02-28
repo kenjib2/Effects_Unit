@@ -50,6 +50,11 @@ int AudioBuffer::getReadIndex(int indexNumber) {
 }
 
 
+void AudioBuffer::setWriteInsert(WriteInsert* writeInsertObject) {
+    writeInsert = writeInsertObject;
+}
+
+
 void AudioBuffer::startLatch(int indexNumber) {
     isLatched = true;
     isFirstLatch = true;
@@ -83,6 +88,10 @@ int16_t AudioBuffer::calculateWriteSample(int16_t sampleIn, bool reverse, float 
   int16_t returnSample = sampleIn;
   if (feedback > EPSILON) {
       returnSample = (int16_t)((sampleIn + feedback * bufferSample) + 0.5f); // Add 0.5f to round to the nearest whole number
+  }
+
+  if (writeInsert != 0) {
+      returnSample = writeInsert->processSample(returnSample);
   }
 
   return returnSample;

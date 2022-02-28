@@ -40,6 +40,11 @@ void MultiTapDelay::setNumTaps(int numTaps) {
 }
 
 
+void MultiTapDelay::setWriteInsert(WriteInsert* writeInsertObject) {
+    primaryDelayBuffer->setWriteInsert(writeInsertObject);
+}
+
+
 // Handle primary delay, write to buffer, then read the taps (no write)
 int16_t MultiTapDelay::processSample(int16_t inputSample) {
     int16_t readSample = tapDelayBuffer->calculateReadSample(inputSample, paramReverse, paramDry, paramWet);

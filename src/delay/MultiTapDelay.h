@@ -18,6 +18,7 @@ class MultiTapDelay {
     void setTapDelayLength(int indexNumber, int delaySamples);
     void setTapDelayLevel(int indexNumber, float level);
     void setNumTaps(int numTaps);
+    void setWriteInsert(WriteInsert* writeInsertObject);
 
   protected:
     AudioBuffer* primaryDelayBuffer;

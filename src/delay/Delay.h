@@ -16,6 +16,7 @@ class Delay {
     int16_t processSample(int16_t inputSample);
     void setDelayLength(int delaySamples);
     void setLoopLatch(float loopLatch); // Between 0.0 and 1.0
+    void setWriteInsert(WriteInsert* writeInsertObject);
 
   protected:
     float paramLoopLatch = 0.0; // Between 0.0 and 1.0

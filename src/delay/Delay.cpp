@@ -22,7 +22,12 @@ void Delay::setDelayLength(int delaySamples) {
 
 void Delay::setLoopLatch(float loopLatch) {
     paramLoopLatch = loopLatch;
-    paramLoopLatchLog = paramLoopLatch * paramLoopLatch; // We want a logorithmic response rate
+    paramLoopLatchLog = paramLoopLatch * paramLoopLatch * paramLoopLatch; // We want a logorithmic response rate
+}
+
+
+void Delay::setWriteInsert(WriteInsert* writeInsertObject) {
+    delayBuffer->setWriteInsert(writeInsertObject);
 }
 
 
@@ -34,7 +39,7 @@ int16_t Delay::processSample(int16_t inputSample) {
         float rand = (float)random(1000) / 1000 ;
         if (rand > (1.f - paramLoopLatchLog)) {
             isLatched = true;
-            timeLatchCount = 13 - 8 * rand;
+            timeLatchCount = 15 - 8 * rand;
             delayBuffer->startLatch(0);
             Serial.println("Latch on");
         }
@@ -44,12 +49,6 @@ int16_t Delay::processSample(int16_t inputSample) {
         delayBuffer->stopLatch();
         Serial.println("Latch off");
     }
-/*    if (timeLatchCount == 0) {
-        float rand = random::uniform();
-        if (rand > (1.f - paramTimeLatchLog)) {
-            timeLatchCount = 13 - 8 * rand;
-        }
-    }*/
     if (timeLatchCount > 0) {
         timeLatchCount--;
     }

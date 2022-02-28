@@ -11,6 +11,14 @@ const int MAX_READ_INDICES = 16;
 const int FADE_SAMPLES = 200;
 
 
+class WriteInsert {
+public:
+  virtual ~WriteInsert() = default;
+
+  virtual int16_t processSample(int16_t sampleIn) = 0;
+};
+
+
 class AudioBuffer {
 
 protected:
@@ -19,6 +27,7 @@ protected:
   int readIndices[MAX_READ_INDICES];
   int delaySize[MAX_READ_INDICES];
   float delayLevels[MAX_READ_INDICES];
+  WriteInsert* writeInsert = 0;
   bool isLatched = false;
   bool isFirstLatch = false;
   int latchSize;
@@ -37,6 +46,7 @@ public:
   int getDelaySize(int indexNumber);
   void setDelayLevel(int indexNumber, float level); // Level between 0.0f and 1.0f
   int getReadIndex(int indexNumber);
+  void setWriteInsert(WriteInsert* writeInsertObject);
   void startLatch(int indexNumber);
   void stopLatch();
   virtual void next(bool reverse) = 0;
