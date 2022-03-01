@@ -8,7 +8,8 @@ AudioBuffer::AudioBuffer(int bufferSize)
 {
   for (int i = 0; i < MAX_READ_INDICES; i++) {
     readIndices[i] = 0;
-    delaySize[i] = MIN_DELAY_TIME_PARAM;
+    prevReadIndices[i] = 0;
+    delaySizes[i] = MIN_DELAY_TIME_PARAM;
     delayLevels[i] = 0.0f;
   }
   audioBuffer = new int16_t[bufferSize](); // parens initialize the buffer to all zeroes
@@ -27,7 +28,8 @@ int16_t AudioBuffer::crossFade(int16_t sampleA, float aCoefficient, int16_t samp
 
 
 void AudioBuffer::setDelaySize(int indexNumber, int numSamples) {
-  delaySize[indexNumber] = numSamples;
+  prevReadIndices[indexNumber] = readIndices[indexNumber];
+  delaySizes[indexNumber] = numSamples;
   readIndices[indexNumber] = writeIndex - numSamples;
   while (readIndices[indexNumber] < 0) {
       readIndices[indexNumber] += bufferSize;
@@ -36,7 +38,7 @@ void AudioBuffer::setDelaySize(int indexNumber, int numSamples) {
 
 
 int AudioBuffer::getDelaySize(int indexNumber) {
-    return delaySize[indexNumber];
+    return delaySizes[indexNumber];
 }
 
 
@@ -58,7 +60,7 @@ void AudioBuffer::setWriteInsert(WriteInsert* writeInsertObject) {
 void AudioBuffer::startLatch(int indexNumber) {
     isLatched = true;
     isFirstLatch = true;
-    latchSize = delaySize[indexNumber];
+    latchSize = delaySizes[indexNumber];
 }
 
 

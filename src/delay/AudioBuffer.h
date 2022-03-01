@@ -8,7 +8,7 @@ const float MAX_DELAY_BUFFER_SECONDS = 1.0;
 const int DELAY_SAMPLE_RATE = 44100;
 const int MAX_DELAY_BUFFER_SIZE = (int)(DELAY_SAMPLE_RATE * MAX_DELAY_BUFFER_SECONDS);
 const int MAX_READ_INDICES = 16;
-const int FADE_SAMPLES = 200;
+const int FADE_SAMPLES = 100;
 
 
 class WriteInsert {
@@ -22,10 +22,9 @@ public:
 class AudioBuffer {
 
 protected:
-  int16_t* audioBuffer;
   int writeIndex;
   int readIndices[MAX_READ_INDICES];
-  int delaySize[MAX_READ_INDICES];
+  int delaySizes[MAX_READ_INDICES];
   float delayLevels[MAX_READ_INDICES];
   WriteInsert* writeInsert = 0;
   bool isLatched = false;
@@ -33,16 +32,17 @@ protected:
   int latchSize;
 
   int16_t crossFade(int16_t sampleA, float aCoefficient, int16_t sampleB);
-  virtual bool atLoopStart() = 0;
 
 public:
+  int16_t* audioBuffer;
   int bufferSize;
   int numReadIndices;
+  int prevReadIndices[MAX_READ_INDICES];
 
   AudioBuffer(int bufferSize);
   virtual ~AudioBuffer();
 
-  void setDelaySize(int indexNumber, int numSamples);
+  void setDelaySize(int indexNumber, int numSamples); // If you change delay size more than once within FADE_BUFFER samples, there will be audible pops
   int getDelaySize(int indexNumber);
   void setDelayLevel(int indexNumber, float level); // Level between 0.0f and 1.0f
   int getReadIndex(int indexNumber);

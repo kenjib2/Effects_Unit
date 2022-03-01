@@ -82,19 +82,20 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
   setSwitchLabel(1, "Tmpo");
 
   delayEffect = new Delay();
-  delayEffect->setDelayLength(10000);
-  delayEffect->paramReverse = false;
+  delayEffect->setDelayLength(20000);
+  delayEffect->paramReverse = true;
   delayEffect->paramDry = 1.0;
-  delayEffect->paramWet = 0.6;
-  delayEffect->paramFeedback = 0.5;
-  delayEffect->setLoopLatch(0.3f);
+  delayEffect->paramWet = 0.8;
+  delayEffect->paramFeedback = 0.6;
+  delayEffect->setLoopLatch(0.35f);
   delayEffect->paramSensitivity = 32767;
 //  delayEffect->paramSensitivity = 30000;
+  delayEffect->setDrift(0.8f);
   writeInsert = new TemporalCollapseWriteInsert();
-  writeInsert->paramSmooth = 0.3f;
-  writeInsert->paramSmear = 0.4f;
+//  writeInsert->paramSmooth = 0.2f;
+  writeInsert->paramSmear = 0.3f;
   writeInsert->paramDrive = 0.8f;
-  writeInsert->paramCrush = 0.2f;
+//  writeInsert->paramCrush = 0.2f;
   delayEffect->setWriteInsert(writeInsert);
 }
 
