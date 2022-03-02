@@ -1,4 +1,5 @@
 #pragma once
+#include "BloomReverbEffect.h"
 #include "LostInSpaceEffect.h"
 #include "RepeaterEffect.h"
 #include "RhythmicDelayEffect.h"

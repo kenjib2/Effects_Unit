@@ -4,6 +4,7 @@
 std::vector<std::string> EffectFactory::getSlot1EffectList() {
 	return {
 		"Bypass"
+    , "Bloom Reverb"
 		, "Lost In Space"
     , "Repeater"
     , "Rhythmic Delay"
@@ -17,6 +18,7 @@ std::vector<std::string> EffectFactory::getSlot1EffectList() {
 std::vector<std::string> EffectFactory::getSlot2EffectList() {
 	return {
 		"Bypass"
+    , "Bloom Reverb"
 		, "Lost In Space"
     , "Repeater"
     , "Rhythmic Delay"
@@ -30,6 +32,9 @@ Effect* EffectFactory::createEffect(std::string effectName) {
 	if (effectName.compare("Bypass") == 0) {
 		return new BypassEffect();
 	}
+  else if (effectName.compare("Bloom Reverb") == 0) {
+    return new BloomReverbEffect();
+  }
 	else if (effectName.compare("Lost In Space") == 0) {
 		return new LostInSpaceEffect();
 	}
