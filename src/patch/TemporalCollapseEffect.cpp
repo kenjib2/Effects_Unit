@@ -1,5 +1,8 @@
 #include "TemporalCollapseEffect.h"
 
+// one reverse pop is consistently at the end of 1st loop after latch on message somewhere but does not go into feedback
+// there is another somewhere else too
+
 
 TemporalCollapseWriteInsert::TemporalCollapseWriteInsert() {
   paramSmooth = 0.f;
@@ -88,6 +91,7 @@ TemporalCollapseEffect::TemporalCollapseEffect() {
   delayEffect->paramWet = 0.8;
   delayEffect->paramFeedback = 0.6;
   delayEffect->setLoopLatch(0.35f);
+//  delayEffect->setLoopLatch(0.f);
   delayEffect->paramSensitivity = 32767;
 //  delayEffect->paramSensitivity = 30000;
   delayEffect->setDrift(0.8f);

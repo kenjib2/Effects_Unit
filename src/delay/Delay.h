@@ -12,6 +12,7 @@ class Delay {
     int paramTimeInSamples = MIN_DELAY_TIME_PARAM;
 
     Delay();
+    Delay(int bufferSize);
     ~Delay();
     
     int16_t processSample(int16_t inputSample);

@@ -2,10 +2,15 @@
 
 
 Delay::Delay() {
-  delayBuffer = new CircularBuffer(MAX_DELAY_BUFFER_SIZE);
-  delayBuffer->numReadIndices = 1;
-  delayBuffer->setDelayLevel(0, 1.0f);
-  sensitivityTriggered = false;
+    Delay(MAX_DELAY_BUFFER_SIZE);
+}
+
+
+Delay::Delay(int bufferSize) {
+    delayBuffer = new CircularBuffer(bufferSize);
+    delayBuffer->numReadIndices = 1;
+    delayBuffer->setDelayLevel(0, 1.0f);
+    sensitivityTriggered = false;
 }
 
 

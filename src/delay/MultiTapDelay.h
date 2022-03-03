@@ -10,6 +10,7 @@ class MultiTapDelay {
     float paramFeedback = 0.0;
 
     MultiTapDelay();
+    MultiTapDelay(int bufferSize);
     ~MultiTapDelay();
 
     int16_t processSample(int16_t inputSample);

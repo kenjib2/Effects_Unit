@@ -2,10 +2,17 @@
 
 
 MultiTapDelay::MultiTapDelay() {
-    primaryDelayBuffer = new CircularBuffer(MAX_DELAY_BUFFER_SIZE);
+    MultiTapDelay(MAX_DELAY_BUFFER_SIZE);
+}
+
+
+MultiTapDelay::MultiTapDelay(int bufferSize) {
+    primaryDelayBuffer = new CircularBuffer(bufferSize);
     primaryDelayBuffer->numReadIndices = 1;
-    tapDelayBuffer = new CircularBuffer(MAX_DELAY_BUFFER_SIZE);
+    primaryDelayBuffer->setDelayLevel(0, 1.f);
+    tapDelayBuffer = new CircularBuffer(bufferSize);
     tapDelayBuffer->numReadIndices = 1;
+    tapDelayBuffer->setDelayLevel(0, 1.f);
 }
 
 

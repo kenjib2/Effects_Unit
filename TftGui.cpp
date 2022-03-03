@@ -29,7 +29,8 @@ void Window::createTestData() {
   patch->setEffect(0, "Bypass");
 //  patch->setEffect(0, "Subtractive Synth");
 
-  patch->setEffect(1, "Bloom Reverb");
+//  patch->setEffect(1, "Bloom Reverb");
+  patch->setEffect(1, "Cosmosis");
 //  patch->setEffect(1, "Lost In Space");
 //  patch->setEffect(1, "Repeater");
 //  patch->setEffect(1, "Rhythmic Delay");

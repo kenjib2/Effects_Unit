@@ -9,6 +9,8 @@ protected:
   bool needPostLatchFadeIn = false;
   int postLatchCount = 0;
 
+  void incIndices(int* indices);
+  void incReverseIndices(int* indices);
   int16_t crossFadeTwoIndices(int previousIndex, int currentIndex, int indexFadeCount);
 
 public:
