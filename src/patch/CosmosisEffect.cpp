@@ -30,17 +30,10 @@ CosmosisEffect::CosmosisEffect() {
 	numSwitches = 0;
 
 	for (int i = 0; i < NUM_COSMOSIS_BUFFERS; i++) {
-		primaryDelays[i] = 7800 - i * 773;
-		delayBuffer[i] = new MultiTapDelay(MAX_COSMOSIS_DELAY);
-		delayBuffer[i]->setNumTaps(NUM_COSMOSIS_TAPS);
+		delayLengths[i] = 7800 - i * 773;
+		delayBuffer[i] = new Delay(MAX_COSMOSIS_DELAY);
 
-		delayBuffer[i]->setPrimaryDelayLength(primaryDelays[i]);
-		delayBuffer[i]->setPrimaryDelayLevel(1.f);
-
-		for (int j = 0; j < NUM_COSMOSIS_TAPS; j++) {
-			delayBuffer[i]->setTapDelayLength(j, primaryDelays[i] * 1 / 2);
-			delayBuffer[i]->setTapDelayLevel(j, 1.f);
-		}
+		delayBuffer[i]->setDelayLength(delayLengths[i]);
 
 		delayBuffer[i]->paramReverse = false;
 		delayBuffer[i]->paramDry = paramDryLevel;
