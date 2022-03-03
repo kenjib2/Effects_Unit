@@ -1,11 +1,6 @@
 #include "MultiTapDelay.h"
 
 
-MultiTapDelay::MultiTapDelay() {
-    MultiTapDelay(MAX_DELAY_BUFFER_SIZE);
-}
-
-
 MultiTapDelay::MultiTapDelay(int bufferSize) {
     primaryDelayBuffer = new CircularBuffer(bufferSize);
     primaryDelayBuffer->numReadIndices = 1;

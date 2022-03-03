@@ -1,11 +1,6 @@
 #include "Delay.h"
 
 
-Delay::Delay() {
-    Delay(MAX_DELAY_BUFFER_SIZE);
-}
-
-
 Delay::Delay(int bufferSize) {
     delayBuffer = new CircularBuffer(bufferSize);
     delayBuffer->numReadIndices = 1;

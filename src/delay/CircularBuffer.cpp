@@ -38,15 +38,13 @@ void CircularBuffer::incReverseIndices(int* indices) {
 
 
 void CircularBuffer::next(bool reverse) {
-  for (int i = 0; i < numReadIndices; i++) {
-    if (reverse) {
-        incReverseIndices(readIndices);
-        incReverseIndices(prevReadIndices);
-    }
-    else {
-        incIndices(readIndices);
-        incIndices(prevReadIndices);
-    }
+  if (reverse) {
+    incReverseIndices(readIndices);
+    incReverseIndices(prevReadIndices);
+  }
+  else {
+    incIndices(readIndices);
+    incIndices(prevReadIndices);
   }
   writeIndex++;
   if (writeIndex >= bufferSize) {

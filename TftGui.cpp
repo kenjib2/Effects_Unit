@@ -36,6 +36,7 @@ void Window::createTestData() {
 //  patch->setEffect(1, "Repeater");
 //  patch->setEffect(1, "Rhythmic Delay");
 //  patch->setEffect(1, "Temporal Collapse");
+//  patch->setEffect(1, "Temporal Collapse");
 
   patchPanel.patch = patch;
 

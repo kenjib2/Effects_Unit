@@ -9,8 +9,7 @@ class MultiTapDelay {
     float paramWet = 0.5;
     float paramFeedback = 0.0;
 
-    MultiTapDelay();
-    MultiTapDelay(int bufferSize);
+    MultiTapDelay(int bufferSize = MAX_DELAY_BUFFER_SIZE);
     ~MultiTapDelay();
 
     int16_t processSample(int16_t inputSample);

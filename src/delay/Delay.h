@@ -11,8 +11,7 @@ class Delay {
     int paramSensitivity = 32767; // Threshold for delay buffer writes in samples between 0 (always off) and 32767 (always on)
     int paramTimeInSamples = MIN_DELAY_TIME_PARAM;
 
-    Delay();
-    Delay(int bufferSize);
+    Delay(int bufferSize = MAX_DELAY_BUFFER_SIZE);
     ~Delay();
     
     int16_t processSample(int16_t inputSample);

@@ -12,6 +12,7 @@ AudioBuffer::AudioBuffer(int bufferSize)
     delaySizes[i] = MIN_DELAY_TIME_PARAM;
     delayLevels[i] = 0.0f;
   }
+  writeInsert = 0;
   audioBuffer = new int16_t[bufferSize](); // parens initialize the buffer to all zeroes
 }
 
