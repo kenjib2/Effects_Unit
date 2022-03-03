@@ -3,16 +3,17 @@
 #include "../delay/MultiTapDelay.h"
 
 
-const int NUM_COSMOSIS_BUFFERS = 1;
-const int NUM_COSMOSIS_TAPS = 1;
+const int NUM_COSMOSIS_BUFFERS = 3;
+const int NUM_COSMOSIS_TAPS = 0;
+const int COSMOSIS_LFO_WAVEFORM = 0;
+const int MAX_COSMOSIS_DELAY = 8000;
 
 
 class CosmosisEffect : public Effect {
 public:
-    float paramDryLevel = 0.8f;
-    float paramWetLevel = 0.8f;
+    float paramDryLevel = 1.f;
+    float paramWetLevel = 1.f;
     int primaryDelays[NUM_COSMOSIS_BUFFERS];  // Between 820 and 2050
-    // Try feedback and reverse?
 
     CosmosisEffect();
     ~CosmosisEffect() override;

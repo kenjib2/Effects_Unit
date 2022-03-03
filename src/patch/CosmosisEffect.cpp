@@ -12,34 +12,34 @@ CosmosisEffect::CosmosisEffect() {
 	numKnobs = 16;
 	setKnobLabel(0, "Mix"); // Crossfade between dry and wet
 	setKnobLabel(1, "Tim1");
-	setKnobLabel(2, "Tap1");
-	setKnobLabel(3, "Tlv1");
-	setKnobLabel(4, "Dep1");
-	setKnobLabel(5, "Spd1");
+	setKnobLabel(2, "Lvl1");
+	setKnobLabel(3, "Dep1");
+	setKnobLabel(4, "Spd1");
+	setKnobLabel(5, "Dpl1"); // Doppler for Modulation
 	setKnobLabel(6, "Tim2");
-	setKnobLabel(7, "Tap2");
-	setKnobLabel(8, "Tlv2");
-	setKnobLabel(9, "Dep2");
-	setKnobLabel(10, "Spd2");
+	setKnobLabel(7, "Tlv2");
+	setKnobLabel(8, "Dep2");
+	setKnobLabel(9, "Spd2");
+	setKnobLabel(10, "Dpl2");
 	setKnobLabel(11, "Tim3");
-	setKnobLabel(12, "Tap3");
-	setKnobLabel(13, "Tlv3");
-	setKnobLabel(14, "Dep3");
-	setKnobLabel(15, "Spd3");
+	setKnobLabel(12, "Tlv3");
+	setKnobLabel(13, "Dep3");
+	setKnobLabel(14, "Spd3");
+	setKnobLabel(15, "Dpl3");
 
 	numSwitches = 0;
 
 	for (int i = 0; i < NUM_COSMOSIS_BUFFERS; i++) {
-		primaryDelays[i] = 1800 - i * 200;
-		delayBuffer[i] = new MultiTapDelay(MODULATION_BUFFER_SIZE);
+		primaryDelays[i] = 7800 - i * 773;
+		delayBuffer[i] = new MultiTapDelay(MAX_COSMOSIS_DELAY);
 		delayBuffer[i]->setNumTaps(NUM_COSMOSIS_TAPS);
 
 		delayBuffer[i]->setPrimaryDelayLength(primaryDelays[i]);
 		delayBuffer[i]->setPrimaryDelayLevel(1.f);
 
 		for (int j = 0; j < NUM_COSMOSIS_TAPS; j++) {
-			delayBuffer[i]->setTapDelayLength(j, primaryDelays[i] * 3 / 4);
-			delayBuffer[i]->setTapDelayLevel(j, 0.5f);
+			delayBuffer[i]->setTapDelayLength(j, primaryDelays[i] * 1 / 2);
+			delayBuffer[i]->setTapDelayLevel(j, 1.f);
 		}
 
 		delayBuffer[i]->paramReverse = false;
@@ -48,6 +48,9 @@ CosmosisEffect::CosmosisEffect() {
 		delayBuffer[i]->paramFeedback = 0.f;
 
 		delayModulation[i] = new Modulation();
+		delayModulation[i]->depth = 0.5f;
+		delayModulation[i]->rate = 1.f + .3 * i;
+		delayModulation[i]->modulationWaveform = COSMOSIS_LFO_WAVEFORM;
 		delayBuffer[i]->setWriteInsert(delayModulation[i]);
 	}
 

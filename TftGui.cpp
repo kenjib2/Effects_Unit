@@ -27,6 +27,7 @@ void Window::createTestData() {
   patch->setPatchName("Dark Neutron Star");
 
   patch->setEffect(0, "Bypass");
+//  patch->setEffect(0, "Cosmosis");
 //  patch->setEffect(0, "Subtractive Synth");
 
 //  patch->setEffect(1, "Bloom Reverb");
