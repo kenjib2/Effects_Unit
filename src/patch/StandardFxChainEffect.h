@@ -6,10 +6,10 @@
 #include "../fx/Distortion.h"
 
 
-class TheFullRackEffect: public Effect {
+class StandardFxChainEffect : public Effect {
   public:
-    TheFullRackEffect();
-    ~TheFullRackEffect() override;
+      StandardFxChainEffect();
+    ~StandardFxChainEffect() override;
     void processEffect(int16_t * effectBuffer) override;
 
   private:

@@ -31,11 +31,12 @@ void Window::createTestData() {
 //  patch->setEffect(0, "Subtractive Synth");
 
 //  patch->setEffect(1, "Bloom Reverb");
-  patch->setEffect(1, "Cosmosis");
+  patch->setEffect(1, "Chorus");
+//  patch->setEffect(1, "Cosmosis");
 //  patch->setEffect(1, "Lost In Space");
 //  patch->setEffect(1, "Repeater");
 //  patch->setEffect(1, "Rhythmic Delay");
-//  patch->setEffect(1, "Temporal Collapse");
+//  patch->setEffect(1, "Standard FX Chain");
 //  patch->setEffect(1, "Temporal Collapse");
 
   patchPanel.patch = patch;

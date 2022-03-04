@@ -6,8 +6,7 @@ CosmosisEffect::CosmosisEffect() {
 
 	setEffectName("Cosmosis");
 
-	numButtons = 1;
-	setButtonLabel(0, "Rvrs");
+	numButtons = 0;
 
 	numKnobs = 16;
 	setKnobLabel(0, "Mix"); // Crossfade between dry and wet
@@ -41,10 +40,12 @@ CosmosisEffect::CosmosisEffect() {
 		delayBuffer[i]->paramFeedback = 0.f;
 
 		delayModulation[i] = new Modulation();
-		delayModulation[i]->depth = 0.5f;
-		delayModulation[i]->rate = 1.f + .3 * i;
+		delayModulation[i]->depth = 0.558f;
+		delayModulation[i]->doppler = -0.2f;
+		delayModulation[i]->setRate(1.f + .3 * i);
 		delayModulation[i]->modulationWaveform = COSMOSIS_LFO_WAVEFORM;
 		delayBuffer[i]->setWriteInsert(delayModulation[i]);
+		//        floatIndex += (lfoValue + 1) / 88 + 0.99; // Target for Modulation.h params
 	}
 
 }

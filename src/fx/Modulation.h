@@ -16,10 +16,10 @@ protected:
     float floatIndex = (MIN_MODULATION_DELAY + MAX_MODULATION_DELAY) / 2;
     int writeIndex = 0;
     int modulationBuffer[MODULATION_BUFFER_SIZE];
+    float rate = 1.f; // in Hz
 
 public:
     float depth = 0.5f; // delay range from 0.f to 1.fs 
-    float rate = 1.f; // in Hz
     float doppler = 0.f; // -1.f to 1.f
     int modulationWaveform = 0;
 
@@ -30,6 +30,12 @@ public:
         lfo.setWaveform(0);
         lfo.setRate(rate);
         memset(modulationBuffer, 0, MODULATION_BUFFER_SIZE * sizeof(int));
+    }
+
+
+    void setRate(float newRate) {
+        rate = newRate;
+        lfo.setRate(newRate);
     }
 
 
@@ -53,10 +59,11 @@ public:
             writeIndex -= MODULATION_BUFFER_SIZE;
         }
 
+        // Typical chorus range for depth is 50 - 200, so (1-4) * 50 with log scaling
+        // Doppler should always be 1.f for chorus. Crazy range should be 0.95 - 1.05 to avoid artifacts.
+        float depthFactor = (1.f - sqrt(depth)) * 3.f + 1.f;
         float lfoValue = lfo.tick(modulationWaveform); // -1 to 1
-        floatIndex += (lfoValue + 1) / 88 + 0.99; // FIRST ONE IS DEPTH -- SECOND ONE IS DOPPLER EFFECT
-//        floatIndex += (lfoValue + 1) / 170 + 1.f; // FIRST ONE IS DEPTH -- SECOND ONE IS DOPPLER EFFECT
-//        floatIndex += (lfoValue + 1) / 85 + 0.95; // FIRST ONE IS DEPTH -- SECOND ONE IS DOPPLER EFFECT
+        floatIndex += (lfoValue + 1.f) / (depthFactor * 50) + doppler * 0.05 + 1.f; // FIRST ONE IS DEPTH -- SECOND ONE IS DOPPLER EFFECT
         while (floatIndex >= MODULATION_BUFFER_SIZE) {
             floatIndex -= MODULATION_BUFFER_SIZE;
         }

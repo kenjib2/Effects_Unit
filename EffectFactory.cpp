@@ -5,13 +5,14 @@ std::vector<std::string> EffectFactory::getSlot1EffectList() {
 	return {
 		"Bypass"
     , "Bloom Reverb"
+    , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
     , "Repeater"
     , "Rhythmic Delay"
+    , "Standard FX Chain"
 		, "Subtractive Synth"
 		, "Temporal Collapse"
-		, "The Full Rack"
 	};
 }
 
@@ -20,12 +21,13 @@ std::vector<std::string> EffectFactory::getSlot2EffectList() {
 	return {
 		"Bypass"
     , "Bloom Reverb"
+    , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
     , "Repeater"
     , "Rhythmic Delay"
+    , "Standard FX Chain"
 		, "Temporal Collapse"
-		, "The Full Rack"
 	};
 }
 
@@ -34,6 +36,9 @@ Effect* EffectFactory::createEffect(std::string effectName) {
 	if (effectName.compare("Bypass") == 0) {
 		return new BypassEffect();
 	}
+  else if (effectName.compare("Chorus") == 0) {
+    return new ChorusEffect();
+  }
   else if (effectName.compare("Cosmosis") == 0) {
     return new CosmosisEffect();
   }
@@ -55,8 +60,8 @@ Effect* EffectFactory::createEffect(std::string effectName) {
 	else if (effectName.compare("Temporal Collapse") == 0) {
 		return new TemporalCollapseEffect();
 	}
-	else if (effectName.compare("The Full Rack") == 0) {
-		return new TheFullRackEffect();
+	else if (effectName.compare("Standard FX Chain") == 0) {
+		return new StandardFxChainEffect();
 	}
 
 	return new BypassEffect();

@@ -1,13 +1,13 @@
-#include "TheFullRackEffect.h"
+#include "StandardFxChainEffect.h"
 
 
 const float sampleRate = 44100.0f;
 
 
-TheFullRackEffect::TheFullRackEffect() {
+StandardFxChainEffect::StandardFxChainEffect() {
   usesSynthMidi = false;
 
-  setEffectName("The Full Rack");
+  setEffectName("Standard FX Chain");
   
   numButtons = 4;
   setButtonLabel(0, "Dist");
@@ -63,14 +63,14 @@ TheFullRackEffect::TheFullRackEffect() {
   reverbDry = 1.0;
 }
 
-TheFullRackEffect::~TheFullRackEffect() {
+StandardFxChainEffect::~StandardFxChainEffect() {
   delete revModel;
   delete delayEffect;
   delete chorusEngine;
   delete distortionEffect;
 }
 
-void TheFullRackEffect::processEffect(int16_t * effectBuffer) {
+void StandardFxChainEffect::processEffect(int16_t * effectBuffer) {
   for (int i = 0; i < 128; i++) {
     int16_t nextSample = effectBuffer[i];
 
