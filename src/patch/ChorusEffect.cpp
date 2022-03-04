@@ -49,19 +49,17 @@ ChorusEffect::ChorusEffect() {
 	delayRates[3] = 0.7f;
 
 	for (int i = 0; i < NUM_CHORUS_BUFFERS; i++) {
+		delayModulation[i] = new Modulation(300);
+		delayModulation[i]->depth = delayDepths[i];
+		delayModulation[i]->setRate(delayRates[i]);
+		delayModulation[i]->setWaveform(CHORUS_LFO_WAVEFORM);
+
 		delayBuffer[i] = new Delay(MAX_CHORUS_DELAY);
-
 		delayBuffer[i]->setDelayLength(delayLengths[0]);
-
 		delayBuffer[i]->paramReverse = false;
 		delayBuffer[i]->paramDry = 0.f;
 		delayBuffer[i]->paramWet = delayLevels[0];
 		delayBuffer[i]->paramFeedback = 0.f;
-
-		delayModulation[i] = new Modulation();
-		delayModulation[i]->depth = delayDepths[i];
-		delayModulation[i]->setRate(delayRates[i]);
-		delayModulation[i]->modulationWaveform = CHORUS_LFO_WAVEFORM;
 		delayBuffer[i]->setWriteInsert(delayModulation[i]);
 	}
 

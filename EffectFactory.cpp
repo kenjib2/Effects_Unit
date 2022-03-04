@@ -48,6 +48,9 @@ Effect* EffectFactory::createEffect(std::string effectName) {
 	else if (effectName.compare("Lost In Space") == 0) {
 		return new LostInSpaceEffect();
 	}
+  else if (effectName.compare("Modulator") == 0) {
+    return new ModulatorEffect();
+  }
   else if (effectName.compare("Repeater") == 0) {
     return new RepeaterEffect();
   }

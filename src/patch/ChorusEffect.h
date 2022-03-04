@@ -14,8 +14,6 @@ const int MAX_CHORUS_DELAY = 2500;
 
 class ChorusEffect : public Effect {
 public:
-    float paramDryLevel = 1.f;
-    float paramWetLevel = 1.f;
     int delayLengths[NUM_CHORUS_BUFFERS];  // Between 820 and 2050
     float delayLevels[NUM_CHORUS_BUFFERS];  // Between 0.f and 1.f
     float delayRates[NUM_CHORUS_BUFFERS];  // In Hz
