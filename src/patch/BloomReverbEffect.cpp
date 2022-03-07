@@ -34,11 +34,11 @@ BloomReverbEffect::BloomReverbEffect() {
 
     revModel = new revmodel();
     revModel->init(sampleRate);
-    revModel->setdamp(0.10);
+    revModel->setdamp(0.15);
     revModel->setwidth(0.0);
     revModel->setroomsize(0.70);
-    reverbWet = 1.0;
-    reverbDry = 0.8f;
+    reverbWet = 0.35;
+    reverbDry = 1.0f;
 
     bloomRevModel = new revmodel();
     bloomRevModel->init(sampleRate);

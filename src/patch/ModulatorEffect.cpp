@@ -32,24 +32,26 @@ ModulatorEffect::ModulatorEffect() :
 	numSwitches = 1;
 	setSwitchLabel(0, "Tmpo");
 
-	vibratoDepth = 0.2f;
+	vibratoDepth = 0.3f;
+	vibratoDepth = 0.f;
 	vibratoRate = 1.3f;
 	vibratoWaveform = 0;
 
-	tremoloDepth = 0.4f;
+	tremoloDepth = 0.5f;
+	tremoloDepth = 0.f;
 	tremoloRate = 8.f;
 	tremoloWaveform = 0;
 
-	flangerLevel = 1.f;
-	flangerTime = 200;
-	flangerFeedback = 0.4f;
-	flangerDepth = 0.9f;
-	flangerRate = 3.f;
+	flangerLevel = 0.5f;
+	flangerTime = 50;
+	flangerFeedback = 0.45f;
+	flangerDepth = 0.3f;
+	flangerRate = 0.71f;
 	flangerWaveform = 0;
 
-	phaserLevel = 0.6f;
-	phaserRate = .1f;
-	phaserFeedback = 0.7f;
+	phaserLevel = 0.9f;
+	phaserRate = .17f;
+	phaserFeedback = 0.8f;
 	phaserMin = 440.f;
 	phaserMax = 1600.f;
 
@@ -59,13 +61,13 @@ ModulatorEffect::ModulatorEffect() :
 	vibratoModulation->setRate(vibratoRate);
 	vibratoModulation->setWaveform(vibratoWaveform);
 
-	flangerModulation = new Modulation(400);
+	flangerModulation = new Modulation(150);
 	flangerModulation->depth = flangerDepth;
 	flangerModulation->doppler = 0.f;
 	flangerModulation->setRate(flangerRate);
 	flangerModulation->setWaveform(flangerWaveform);
 	flangerModulation->depthScale = 400.f;
-	flangerBuffer = new Delay(4000);
+	flangerBuffer = new Delay(300);
 	flangerBuffer->setDelayLength(flangerTime);
 	flangerBuffer->paramReverse = false;
 	flangerBuffer->paramDry = 1.f;

@@ -9,3 +9,4 @@
 #include "StandardFxChainEffect.h"
 #include "SubtractiveSynthEffect.h"
 #include "TemporalCollapseEffect.h"
+#include "TestEffect.h"

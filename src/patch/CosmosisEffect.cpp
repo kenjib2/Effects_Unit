@@ -41,8 +41,8 @@ CosmosisEffect::CosmosisEffect() {
 
 		delayModulation[i] = new Modulation();
 		delayModulation[i]->depth = 0.558f;
-//		delayModulation[i]->doppler = -0.2f;
-		delayModulation[i]->doppler = -1.f;
+		delayModulation[i]->doppler = -0.2f;
+//		delayModulation[i]->doppler = -1.f;
 		delayModulation[i]->setRate(1.f + .3 * i);
 		delayModulation[i]->setWaveform(COSMOSIS_LFO_WAVEFORM);
 		delayBuffer[i]->setWriteInsert(delayModulation[i]);

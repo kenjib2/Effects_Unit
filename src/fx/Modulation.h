@@ -5,6 +5,8 @@
 
 // We are starting here already at a 600 sample delay. Adding 1450 takes us to 2050, which is 50ms. +300 samples is @20.4 ms. 20-50 is a typical chorus range.
 // Adding 300 or higher sample delay to the main delay line or whatever based on a param to get into chorus sound range. No extra delay is a longish delay flanger
+// Typical Flanger delay sizes are @ 221 - 1323 (5ms - 30ms) or @221 or 44 - 309 (1ms - 7ms)
+// Typical Chorus delay sizes are 662 - 1544 (15ms - 35ms) or 441 - 2205 (10ms - 50ms) or 265 - 441 (6ms - 10ms)
 const int MIN_MODULATION_DELAY = 0;
 const int MAX_MODULATION_DELAY = 1200;
 const int MODULATION_BUFFER_SIZE = MAX_MODULATION_DELAY + 1;

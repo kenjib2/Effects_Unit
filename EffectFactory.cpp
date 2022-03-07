@@ -8,6 +8,7 @@ std::vector<std::string> EffectFactory::getSlot1EffectList() {
     , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
+    , "Modulator"
     , "Repeater"
     , "Rhythmic Delay"
     , "Standard FX Chain"
@@ -24,6 +25,7 @@ std::vector<std::string> EffectFactory::getSlot2EffectList() {
     , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
+    , "Modulator"
     , "Repeater"
     , "Rhythmic Delay"
     , "Standard FX Chain"
@@ -57,15 +59,18 @@ Effect* EffectFactory::createEffect(std::string effectName) {
   else if (effectName.compare("Rhythmic Delay") == 0) {
     return new RhythmicDelayEffect();
   }
+  else if (effectName.compare("Standard FX Chain") == 0) {
+    return new StandardFxChainEffect();
+  }
 	else if (effectName.compare("Subtractive Synth") == 0) {
 		return new SubtractiveSynthEffect();
 	}
 	else if (effectName.compare("Temporal Collapse") == 0) {
 		return new TemporalCollapseEffect();
 	}
-	else if (effectName.compare("Standard FX Chain") == 0) {
-		return new StandardFxChainEffect();
-	}
+  else if (effectName.compare("Test") == 0) {
+    return new TestEffect();
+  }
 
 	return new BypassEffect();
 }

@@ -20,7 +20,7 @@ public:
     int tremoloWaveform = 0;
 
     float flangerLevel = 0.f;  // 0.f to 1.f
-    int flangerTime = 800; // typically 441 - 2205 but -150 for the mod buffer size
+    int flangerTime = 200; // typically 441 - 2205 but -150 for the mod buffer size
     float flangerFeedback = 0.f;  // 0.f to 1.f
     float flangerDepth = 0.f;  // 0.f to 1.f
     float flangerRate = 1.f;  // In hz.
