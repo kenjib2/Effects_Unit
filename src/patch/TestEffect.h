@@ -3,7 +3,8 @@
 
 
 #include "../../patch.h"
-#include "../fx/Modulation.h"
+#include "../fx/PitchShift.h"
+//#include "../granular/GranularBuffer.h"
 
 
 class TestEffect : public Effect {
@@ -13,6 +14,9 @@ public:
     void processEffect(int16_t* effectBuffer) override;
 
 private:
+//    GrainPool* grainPool;
+//    GranularBuffer* granularBuffer;
+    PitchShift* pitchShift;
 };
 
 

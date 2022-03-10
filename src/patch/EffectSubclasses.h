@@ -1,10 +1,10 @@
 #pragma once
-#include "BloomReverbEffect.h"
 #include "ChorusEffect.h"
 #include "CosmosisEffect.h"
 #include "LostInSpaceEffect.h"
 #include "ModulatorEffect.h"
 #include "RepeaterEffect.h"
+#include "ReverbEffect.h"
 #include "RhythmicDelayEffect.h"
 #include "StandardFxChainEffect.h"
 #include "SubtractiveSynthEffect.h"

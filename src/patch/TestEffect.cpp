@@ -1,6 +1,9 @@
 #include "TestEffect.h"
 
 
+const int TEST_GRAIN_POOL_SIZE = 10;
+
+
 TestEffect::TestEffect() {
 	usesSynthMidi = false;
 
@@ -28,15 +31,26 @@ TestEffect::TestEffect() {
 
 	numSwitches = 0;
 
+//	grainPool = new GrainPool(TEST_GRAIN_POOL_SIZE);
+//	granularBuffer = new GranularBuffer(grainPool);
+//	granularBuffer->speedMultiplier = 1.1f;
+
+	pitchShift = new PitchShift();
 }
 
 TestEffect::~TestEffect() {
+//	delete grainPool;
+//	delete granularBuffer;
+	delete pitchShift;
 }
 
 void TestEffect::processEffect(int16_t* effectBuffer) {
+//	granularBuffer->loadSamples(effectBuffer, 128);
+
 	for (int i = 0; i < 128; i++) {
-		int16_t nextSample = effectBuffer[i];
-//		nextSample += delayBuffer->processSample(nextSample); // How to prevent overflows?
-		effectBuffer[i] = nextSample;
+		int sample = effectBuffer[i];
+		//			effectBuffer[i] = granularBuffer->getNextSample();
+		sample = pitchShift->processSample(sample);
+		effectBuffer[i] = sample;
 	}
 }

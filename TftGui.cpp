@@ -26,22 +26,22 @@ void Window::createTestData() {
   Patch * patch = new Patch();
   patch->setPatchName("Dark Neutron Star");
 
-  patch->setEffect(0, "Bypass");
+//  patch->setEffect(0, "Bypass");
 //  patch->setEffect(0, "Chorus");
 //  patch->setEffect(0, "Cosmosis");
 //  patch->setEffect(0, "Modulator");
-//  patch->setEffect(0, "Subtractive Synth");
+  patch->setEffect(0, "Subtractive Synth");
 
-//  patch->setEffect(1, "Bloom Reverb");
 //  patch->setEffect(1, "Chorus");
 //  patch->setEffect(1, "Cosmosis");
-//  patch->setEffect(1, "Lost In Space");
+  patch->setEffect(1, "Lost In Space");
 //  patch->setEffect(1, "Modulator");
 //  patch->setEffect(1, "Repeater");
-  patch->setEffect(1, "Rhythmic Delay");
+//  patch->setEffect(1, "Reverb");
+//  patch->setEffect(1, "Rhythmic Delay");
 //  patch->setEffect(1, "Standard FX Chain");
 //  patch->setEffect(1, "Temporal Collapse");
-//  patch->setEffect(1, "Test");
+//   patch->setEffect(1, "Test");
 
   patchPanel.patch = patch;
 

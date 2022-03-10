@@ -1,4 +1,5 @@
 #pragma once
+#include "../../Util.h"
 #include "../chorus/Lfo.h"
 #include "../delay/AudioBuffer.h"
 
@@ -17,7 +18,7 @@ protected:
     Lfo lfo;
     float floatIndex = MODULATION_BUFFER_SIZE / 2;
     int writeIndex = 0;
-    int* modulationBuffer;
+    int16_t* modulationBuffer;
     int bufferSize;
     float rate = 1.f; // in Hz
     int modulationWaveform = 0;
@@ -33,10 +34,10 @@ public:
     {
         bufferSize = bufSize;
         floatIndex = bufSize / 2;
-        modulationBuffer = new int[bufSize]();
+        modulationBuffer = new int16_t[bufSize]();
         lfo.setWaveform(0);
         lfo.setRate(rate);
-        memset(modulationBuffer, 0, bufSize * sizeof(int));
+        memset(modulationBuffer, 0, bufSize * sizeof(int16_t));
     }
 
 
@@ -60,17 +61,7 @@ public:
     int16_t processSample(int16_t sample) override {
         modulationBuffer[writeIndex] = sample;
 
-        int curIndex = (int)floor(floatIndex);
-        int nextIndex = curIndex + 1;
-        if (nextIndex >= bufferSize) {
-            nextIndex -= bufferSize;
-        }
-        double fractionalIndex = floatIndex - (double)curIndex;
-
-        int16_t curSample = modulationBuffer[curIndex];
-        int16_t nextSample = modulationBuffer[nextIndex];
-
-        int16_t readSample = (int16_t)((1 - fractionalIndex) * curSample + fractionalIndex * nextSample);
+        int16_t readSample = linearInterpolation(modulationBuffer, bufferSize, floatIndex);
 
         writeIndex++;
         if (writeIndex >= bufferSize) {

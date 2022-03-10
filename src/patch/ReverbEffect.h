@@ -1,11 +1,12 @@
 #include "../../Patch.h"
 #include "../freeverb/revmodel.hpp"
+#include "../delay/MultiTapDelay.h"
 
 
-class BloomReverbEffect : public Effect {
+class ReverbEffect : public Effect {
 public:
-    BloomReverbEffect();
-    ~BloomReverbEffect() override;
+    ReverbEffect();
+    ~ReverbEffect() override;
     void processEffect(int16_t* effectBuffer) override;
 
 private:

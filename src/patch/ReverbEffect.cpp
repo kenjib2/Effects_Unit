@@ -1,33 +1,23 @@
-#include "BloomReverbEffect.h"
+#include "ReverbEffect.h"
 
 
 const float sampleRate = 44100.0f;
 
 
-BloomReverbEffect::BloomReverbEffect() {
+ReverbEffect::ReverbEffect() {
     usesSynthMidi = false;
 
-    setEffectName("Bloom Reverb");
+    setEffectName("Reverb");
 
     numButtons = 0;
 
-    numKnobs = 16;
+    numKnobs = 6;
     setKnobLabel(0, "Dry");
     setKnobLabel(1, "Wet");
     setKnobLabel(2, "Size");
     setKnobLabel(3, "Damp");
-    setKnobLabel(4, "Shrt");
-    setKnobLabel(5, "Time");
-    setKnobLabel(6, "Fdbk");
-    setKnobLabel(7, "Ptch");
-    setKnobLabel(8, "Long");
-    setKnobLabel(9, "Time");
-    setKnobLabel(10, "Fdbk");
-    setKnobLabel(11, "Ptch");
-    setKnobLabel(12, "BlmL"); // Bloom Level
-    setKnobLabel(12, "BlmT"); // Bloom Time
-    setKnobLabel(13, "Shim"); // Shimmer
-    setKnobLabel(14, "Driv"); // Drive
+    setKnobLabel(4, "BlmL"); // Bloom Level
+    setKnobLabel(5, "BlmT"); // Bloom Time
 
     numSwitches = 1;
     setSwitchLabel(0, "Hold"); // Freeze mode on for the reverb
@@ -47,12 +37,12 @@ BloomReverbEffect::BloomReverbEffect() {
     bloomRevModel->setroomsize(0.30);
 }
 
-BloomReverbEffect::~BloomReverbEffect() {
+ReverbEffect::~ReverbEffect() {
     delete revModel;
     delete bloomRevModel;
 }
 
-void BloomReverbEffect::processEffect(int16_t* effectBuffer) {
+void ReverbEffect::processEffect(int16_t* effectBuffer) {
     for (int i = 0; i < 128; i++) {
         int16_t nextSample = effectBuffer[i];
 

@@ -4,12 +4,12 @@
 std::vector<std::string> EffectFactory::getSlot1EffectList() {
 	return {
 		"Bypass"
-    , "Bloom Reverb"
     , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
     , "Modulator"
     , "Repeater"
+    , "Reverb"
     , "Rhythmic Delay"
     , "Standard FX Chain"
 		, "Subtractive Synth"
@@ -21,12 +21,12 @@ std::vector<std::string> EffectFactory::getSlot1EffectList() {
 std::vector<std::string> EffectFactory::getSlot2EffectList() {
 	return {
 		"Bypass"
-    , "Bloom Reverb"
     , "Chorus"
     , "Cosmosis"
 		, "Lost In Space"
     , "Modulator"
     , "Repeater"
+    , "Reverb"
     , "Rhythmic Delay"
     , "Standard FX Chain"
 		, "Temporal Collapse"
@@ -44,9 +44,6 @@ Effect* EffectFactory::createEffect(std::string effectName) {
   else if (effectName.compare("Cosmosis") == 0) {
     return new CosmosisEffect();
   }
-  else if (effectName.compare("Bloom Reverb") == 0) {
-    return new BloomReverbEffect();
-  }
 	else if (effectName.compare("Lost In Space") == 0) {
 		return new LostInSpaceEffect();
 	}
@@ -55,6 +52,9 @@ Effect* EffectFactory::createEffect(std::string effectName) {
   }
   else if (effectName.compare("Repeater") == 0) {
     return new RepeaterEffect();
+  }
+  else if (effectName.compare("Reverb") == 0) {
+    return new ReverbEffect();
   }
   else if (effectName.compare("Rhythmic Delay") == 0) {
     return new RhythmicDelayEffect();
