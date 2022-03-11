@@ -46,39 +46,39 @@ LostInSpaceEffect::LostInSpaceEffect() {
   // Or have a second effect for long reflections...
   delay = true;
   primaryDelay = 7000;
-  delayLevel = 0.6;
+  delayLevel = 0.12f;
   shortReflections = new MultiTapDelay(13000);
   shortReflections->setNumTaps(5);
   shortReflections->setPrimaryDelayLength(primaryDelay);
-  shortReflections->setPrimaryDelayLevel(delayLevel);
+  shortReflections->setPrimaryDelayLevel(1.f);
 
   shortReflections->setTapDelayLength(0, primaryDelay / 2);
-  shortReflections->setTapDelayLevel(0, delayLevel);
+  shortReflections->setTapDelayLevel(0, 1.f);
   shortReflections->setTapDelayLength(1, primaryDelay / 3);
-  shortReflections->setTapDelayLevel(1, delayLevel);
+  shortReflections->setTapDelayLevel(1, 1.f);
   shortReflections->setTapDelayLength(2, primaryDelay * 2 / 3);
-  shortReflections->setTapDelayLevel(2, delayLevel);
+  shortReflections->setTapDelayLevel(2, 1.f);
   shortReflections->setTapDelayLength(3, primaryDelay * 3 / 4);
-  shortReflections->setTapDelayLevel(3, delayLevel);
+  shortReflections->setTapDelayLevel(3, 1.f);
   shortReflections->setTapDelayLength(4, (int)(primaryDelay * 1.61803399));
-  shortReflections->setTapDelayLevel(4, delayLevel);
+  shortReflections->setTapDelayLevel(4, 1.f);
 
-  shortReflections->paramReverse = true;
-  shortReflections->paramDry = 1.0;
-  shortReflections->paramWet = 0.f;
+  shortReflections->paramReverse = false;
+  shortReflections->paramDry = 1.f;
+  shortReflections->paramWet = delayLevel;
   shortReflections->paramFeedback = 0.f;
 
   int primaryLongDelay = 7000;
-  float longDelayLevel = 1.f;
+  float longDelayLevel = .14f;
   longReflections = new MultiTapDelay(13000);
   longReflections->setNumTaps(1);
   longReflections->setPrimaryDelayLength(primaryLongDelay);
-  longReflections->setPrimaryDelayLevel(longDelayLevel);
+  longReflections->setPrimaryDelayLevel(1.f);
 
-  longReflections->paramReverse = true;
-  longReflections->paramDry = 1.0;
-  longReflections->paramWet = 0.f;
-  longReflections->paramFeedback = 0.4f;
+  longReflections->paramReverse = false;
+  longReflections->paramDry = 1.f;
+  longReflections->paramWet = longDelayLevel;
+  longReflections->paramFeedback = 0.5f;
 
   distortion = true;
   distortionEffect = new Distortion();
@@ -88,7 +88,7 @@ LostInSpaceEffect::LostInSpaceEffect() {
   reverb = true;
   revModel = new revmodel();
   revModel->init(sampleRate);
-  revModel->setdamp(0.15);
+  revModel->setdamp(0.1);
   revModel->setwidth(0.0);
   revModel->setroomsize(0.70);
   reverbWet = 1.f;
@@ -104,14 +104,14 @@ LostInSpaceEffect::LostInSpaceEffect() {
   shimmerPitch->playbackSpeed = 2.f;
 
   int primaryShimmerDelay = 18000;
-  float shimmerDelayLevel = .08f;
+  float shimmerDelayLevel = .09f;
   shimmerDelay = new Delay(20000);
   shimmerDelay->setDelayLength(primaryShimmerDelay);
 
   shimmerDelay->paramReverse = false;
-  shimmerDelay->paramDry = 0.9f;
+  shimmerDelay->paramDry = 1.f;
   shimmerDelay->paramWet = shimmerDelayLevel;
-  shimmerDelay->paramFeedback = 0.5f;
+  shimmerDelay->paramFeedback = 0.35f;
   shimmerDelay->setWriteInsert(shimmerPitch);
 
 }
@@ -136,7 +136,7 @@ void LostInSpaceEffect::processEffect(int16_t * effectBuffer) {
             float floatSample = (float)nextSample;
             float chorusSample = floatSample;
             chorusEngine->process(&chorusSample);
-            nextSample = floatSample * 0.8 + chorusSample * 0.25;
+            nextSample = floatSample * 0.8 + chorusSample * 0.2;
         }
 
         if (delay) {

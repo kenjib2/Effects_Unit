@@ -15,16 +15,15 @@ const int DISPLAY_PANEL_MARGIN = 4;
 const int COLOR_BACKGROUND = 0x0801;
 const int COLOR_BORDER = 0x8841;
 const int COLOR_TEXT = 0xA51F; // 0x7BFF;
-const int SELECTED_TEXT_RED = 255;
-const int SELECTED_TEXT_GREEN = 255;
-const int SELECTED_TEXT_BLUE = 255;
 const int COLOR_TEXT_SELECTED = 0xFFFF;
+const int COLOR_TEXT_SELECTED_BACKGROUND = 0x52F6;
 
 
 typedef enum InputState {
-  EFFECT_CONTROL
+  PATCH_CONTROL
   , EFFECT_SELECT
   , PATCH_SELECT
+  , RENAME
 } InputState;
 
 
@@ -54,6 +53,25 @@ class EffectSelectPanel: public DisplayPanel {
     void decrementSelect();
     void incrementSelect();
     void doRender(int xPos, int yPos, int width, int height) override;
+};
+
+
+class TextInputPanel: public DisplayPanel {
+  public:
+    using DisplayPanel::DisplayPanel;
+
+    int selection = 0;
+    char * textVal = 0;
+    int textSize = 0;
+    bool letterSelected = false;
+
+    void decrementSelect();
+    void incrementSelect();
+    void doRender(int xPos, int yPos, int width, int height) override;
+
+  protected:
+    char prevChar(char curChar);
+    char nextChar(char curChar);
 };
 
 
@@ -88,6 +106,7 @@ class Window {
     PatchPanel patchPanel;
     ControlsPanel controlsPanel;
     EffectSelectPanel effectSelectPanel;
+    TextInputPanel textInputPanel;
 
   public:
     Window(ST7735_t3 &tft);

@@ -5,16 +5,19 @@
 #include "EffectFactory.h"
 
 
+// ---------------------------------- Window ----------------------------------
+
 Window::Window(ST7735_t3 &tft) 
   : tft(tft)
   , patchPanel(tft)
   , controlsPanel(tft)
   , effectSelectPanel(tft)
+  , textInputPanel(tft)
 {
 }
 
 void Window::initDisplay() {
-  inputState = EFFECT_CONTROL;
+  inputState = PATCH_CONTROL;
   tft.initR(INITR_BLACKTAB);
   tft.setRotation(1);
 
@@ -55,6 +58,8 @@ void Window::render() {
   controlsPanel.render(0, 64, 160, 64);
   if (inputState == EFFECT_SELECT) {
     effectSelectPanel.render(20, 10, 120, 108);
+  } else if (inputState == RENAME) {
+    textInputPanel.render(20, 10, 120, 35);
   }
 }
 
@@ -72,6 +77,130 @@ Effect * Window::getEffect(int effectNumber) {
 }
 
 
+void Window::scrollDown() {
+  switch (inputState) {
+    case PATCH_CONTROL:
+      patchPanel.incrementSelect();
+      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
+        patchPanel.selectedEffect = patchPanel.selection - 1;
+        controlsPanel.effect = patchPanel.getSelectedEffect();
+        controlsPanel.invalidate();
+      }
+      break;
+    case EFFECT_SELECT:
+      effectSelectPanel.incrementSelect();
+      break;
+    case PATCH_SELECT:
+      break;
+    case RENAME:
+      textInputPanel.incrementSelect();
+      break;
+  }
+}
+
+
+void Window::scrollUp() {
+  switch (inputState) {
+    case PATCH_CONTROL:
+      patchPanel.decrementSelect();
+      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
+        patchPanel.selectedEffect = patchPanel.selection - 1;
+        controlsPanel.effect = patchPanel.getSelectedEffect();
+        controlsPanel.invalidate();
+      }
+      break;
+    case EFFECT_SELECT:
+      effectSelectPanel.decrementSelect();
+      break;
+    case PATCH_SELECT:
+      break;
+    case RENAME:
+      textInputPanel.decrementSelect();
+      break;
+  }
+}
+
+
+void Window::select() {
+  switch (inputState) {
+
+    case PATCH_CONTROL:
+      if (patchPanel.selection == 0) {
+        // Change the patch
+        
+      } else if (patchPanel.selection <= NUM_EFFECTS) {
+        // Change the effect
+        patchPanel.selectedEffect = patchPanel.selection - 1; // -1 to account for patch name.
+        effectSelectPanel.slot = patchPanel.selectedEffect;
+        if (effectSelectPanel.slot == 0) {
+          effectSelectPanel.effectVector = EffectFactory::getSlot1EffectList();
+        } else {
+          effectSelectPanel.effectVector = EffectFactory::getSlot2EffectList();
+        }
+        effectSelectPanel.selection = 0;
+        effectSelectPanel.invalidate();
+        inputState = EFFECT_SELECT;
+
+      } else if (patchPanel.selection == NUM_EFFECTS + 1) {
+        // New
+        
+      } else if (patchPanel.selection == NUM_EFFECTS + 2) {
+        // Copy
+        
+      } else if (patchPanel.selection == NUM_EFFECTS + 3) {
+        // Rename
+        textInputPanel.textSize = MAX_PATCH_NAME_LENGTH;
+        if (textInputPanel.textVal) {
+          delete textInputPanel.textVal;
+        }
+        textInputPanel.textVal = (char *)malloc((MAX_PATCH_NAME_LENGTH + 1) * sizeof(char));
+        strcpy(textInputPanel.textVal, patchPanel.patch->patchName);
+        memset(textInputPanel.textVal + (strlen(patchPanel.patch->patchName) * sizeof(char)), 32, (MAX_PATCH_NAME_LENGTH - strlen(patchPanel.patch->patchName)) * sizeof(char));
+        textInputPanel.textVal[MAX_PATCH_NAME_LENGTH] = 0;
+        textInputPanel.invalidate();
+        inputState = RENAME;
+
+      } else if (patchPanel.selection == NUM_EFFECTS + 4) {
+        // Save
+      }
+      break;
+
+    case EFFECT_SELECT:
+      patchPanel.patch->setEffect(effectSelectPanel.slot, effectSelectPanel.effectVector[effectSelectPanel.selection]);
+      controlsPanel.effect = patchPanel.patch->effects[effectSelectPanel.slot];
+      inputState = PATCH_CONTROL;
+      invalidate();
+      break;
+
+    case PATCH_SELECT:
+      invalidate();
+      break;
+
+    case RENAME:
+      if (textInputPanel.selection == 0) {
+        // Cancel
+        inputState = PATCH_CONTROL;
+        invalidate();
+      } else if (textInputPanel.selection == 1) {
+        // Okay
+        for (int i = MAX_PATCH_NAME_LENGTH - 1; textInputPanel.textVal[i] == ' ' && i > 0; i--) {
+          textInputPanel.textVal[i] = 0;
+        }
+        strcpy(patchPanel.patch->patchName, textInputPanel.textVal);
+        inputState = PATCH_CONTROL;
+        invalidate();
+      } else {
+        // Letter
+        textInputPanel.letterSelected = !textInputPanel.letterSelected;
+      }
+      break;
+
+  }
+}
+
+
+// ---------------------------------- DisplayPanel ----------------------------------
+
 DisplayPanel::DisplayPanel(ST7735_t3 &tft)
 : tft(tft) {
 }
@@ -87,6 +216,8 @@ void DisplayPanel::render(int xPos, int yPos, int width, int height) {
   }
 }
 
+
+// ---------------------------------- PatchPanel ----------------------------------
 
 Effect * PatchPanel::getSelectedEffect() {
   return patch->effects[selectedEffect];
@@ -188,6 +319,8 @@ void PatchPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
+// ---------------------------------- ControlsPanel ----------------------------------
+
 void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
   // Background and Border
   tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
@@ -223,6 +356,8 @@ void ControlsPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
+// ---------------------------------- EffectSelectPanel ----------------------------------
+
 void EffectSelectPanel::decrementSelect() {
   selection -= 1;
   if (selection < 0) {
@@ -255,71 +390,83 @@ void EffectSelectPanel::doRender(int xPos, int yPos, int width, int height) {
 }
 
 
-void Window::scrollDown() {
-  switch (inputState) {
-    case EFFECT_CONTROL:
-      patchPanel.incrementSelect();
-      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
-        patchPanel.selectedEffect = patchPanel.selection - 1;
-        controlsPanel.effect = patchPanel.getSelectedEffect();
-        controlsPanel.invalidate();
-      }
-      break;
-    case EFFECT_SELECT:
-      effectSelectPanel.incrementSelect();
-      break;
-    case PATCH_SELECT:
-      break;
+// ---------------------------------- TextInputPanel ----------------------------------
+
+void TextInputPanel::decrementSelect() {
+  if (letterSelected) {
+    textVal[selection - 2] = prevChar(textVal[selection - 2]);
+  } else {
+    selection -= 1;
+    if (selection < 0) {
+      selection += MAX_PATCH_NAME_LENGTH + 2;
+    }
+  }
+  invalidate();
+}
+
+
+void TextInputPanel::incrementSelect() {
+  if (letterSelected) {
+    textVal[selection - 2] = nextChar(textVal[selection - 2]);
+  } else {
+    selection = (selection + 1) % (MAX_PATCH_NAME_LENGTH + 2);
+  }
+  invalidate();
+}
+
+
+void TextInputPanel::doRender(int xPos, int yPos, int width, int height) {
+  // Background and Border
+  tft.fillRect(xPos, yPos, width, height, COLOR_BACKGROUND);
+  tft.drawRect(xPos, yPos, width, height, COLOR_BORDER);
+
+  for (int i = 0; i < MAX_PATCH_NAME_LENGTH; i++) {
+    if (selection == i + 2) {
+      tft.setTextColor(COLOR_TEXT_SELECTED, COLOR_TEXT_SELECTED_BACKGROUND);
+    } else {
+      tft.setTextColor(COLOR_TEXT);
+    }
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + i * FONT_WIDTH, yPos + DISPLAY_PANEL_MARGIN);
+    tft.print(textVal[i]);
+  }
+
+    if (selection == 0) {
+      tft.setTextColor(COLOR_TEXT_SELECTED);
+    } else {
+      tft.setTextColor(COLOR_TEXT);
+    }
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN, yPos + DISPLAY_PANEL_MARGIN + LINE_HEIGHT * 2);
+    tft.print("CANCEL");
+    if (selection == 1) {
+      tft.setTextColor(COLOR_TEXT_SELECTED);
+    } else {
+      tft.setTextColor(COLOR_TEXT);
+    }
+    tft.setCursor(xPos + DISPLAY_PANEL_MARGIN + FONT_WIDTH * 17, yPos + DISPLAY_PANEL_MARGIN + LINE_HEIGHT * 2);
+    tft.print("OKAY");
+    
+}
+
+
+char TextInputPanel::prevChar(char curChar) {
+  switch (curChar) {
+    case ' ':
+      return 'z';
+    case '0':
+      return '.';
+    default:
+      return curChar - 1;
   }
 }
 
-void Window::scrollUp() {
-  switch (inputState) {
-    case EFFECT_CONTROL:
-      patchPanel.decrementSelect();
-      if (patchPanel.selection > 0 && patchPanel.selection <= NUM_EFFECTS) {
-        patchPanel.selectedEffect = patchPanel.selection - 1;
-        controlsPanel.effect = patchPanel.getSelectedEffect();
-        controlsPanel.invalidate();
-      }
-      break;
-    case EFFECT_SELECT:
-      effectSelectPanel.decrementSelect();
-      break;
-    case PATCH_SELECT:
-      break;
-  }
-}
-
-void Window::select() {
-  switch (inputState) {
-    case EFFECT_CONTROL:
-      if (patchPanel.selection == 0) {
-      } else if (patchPanel.selection <= NUM_EFFECTS) {
-        patchPanel.selectedEffect = patchPanel.selection - 1; // -1 to account for patch name.
-        effectSelectPanel.slot = patchPanel.selectedEffect;
-        if (effectSelectPanel.slot == 0) {
-          effectSelectPanel.effectVector = EffectFactory::getSlot1EffectList();
-        } else {
-          effectSelectPanel.effectVector = EffectFactory::getSlot2EffectList();
-        }
-        effectSelectPanel.selection = 0;
-        effectSelectPanel.invalidate();
-        inputState = EFFECT_SELECT;
-      } else if (patchPanel.selection == NUM_EFFECTS + 1) {
-      } else if (patchPanel.selection == NUM_EFFECTS + 2) {
-      } else if (patchPanel.selection == NUM_EFFECTS + 3) {
-      } else if (patchPanel.selection == NUM_EFFECTS + 4) {
-      }
-      break;
-    case EFFECT_SELECT:
-      patchPanel.patch->setEffect(effectSelectPanel.slot, effectSelectPanel.effectVector[effectSelectPanel.selection]);
-      controlsPanel.effect = patchPanel.patch->effects[effectSelectPanel.slot];
-      inputState = EFFECT_CONTROL;
-      invalidate();
-      break;
-    case PATCH_SELECT:
-      invalidate();
-      break;
+    
+char TextInputPanel::nextChar(char curChar) {
+  switch (curChar) {
+    case 'z':
+      return ' ';
+    case '.':
+      return '0';
+    default:
+      return curChar + 1;
   }
 }
