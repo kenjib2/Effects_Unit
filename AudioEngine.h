@@ -1,4 +1,5 @@
 #include <Audio.h>
+#include <USBHost_t36.h>
 #include "patch.h"
 
 
@@ -16,8 +17,8 @@ enum SynthMode {
 };
 
 
-void initAudioEngine(usb_midi_class usbMIDIControl);
-void processMidi(usb_midi_class usbMIDIControl);
+void initAudioEngine(MIDIDevice * midiDevice);
+void processMidi();
 void processAudioEngine(Effect * effect1, Effect * effect2);
 void setKnob(int knobNumber, short value);
 

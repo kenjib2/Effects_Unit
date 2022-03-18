@@ -286,6 +286,7 @@ const int MAX_ENVELOPE_MS = 5000;
 
 
 // GLOBAL VARIABLES
+MIDIDevice * midiDevice;
 SynthMode synthMode;
 byte globalNote = 0;
 int octave = 0;
@@ -297,12 +298,17 @@ byte notesBuffered = 0;
 bool vcoPlaying[NUM_VOICES];
 
 
-void initAudioEngine(usb_midi_class usbMIDIControl) {
+void initAudioEngine(MIDIDevice * midiDvc) {
+  AudioNoInterrupts();
+  
   AudioMemory(60);
 
   sgtl5000_1.enable();
-  sgtl5000_1.volume(0.70);
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
+//  sgtl5000_1.unmuteLineout();
+  sgtl5000_1.volume(0.50);
+//  sgtl5000_1.lineInLevel(1); //use 2 for 1:1
+//  sgtl5000_1.lineOutLevel(13);  
 
   synthMixer.gain(0, 1.0);
   synthMixer.gain(1, 1.0);
@@ -316,11 +322,6 @@ void initAudioEngine(usb_midi_class usbMIDIControl) {
   synthPolyphony_2.gain(0, 0.3);
   synthPolyphony_2.gain(1, 0.3);
   synthPolyphony_2.gain(2, 0.3);
-
-  usbMIDIControl.setHandleControlChange(midiControlChange);
-  usbMIDIControl.setHandleNoteOff(midiNoteOff);
-  usbMIDIControl.setHandleNoteOn(midiNoteOn);
-  usbMIDIControl.setHandlePitchChange(midiPitchBend);
 
   synthMode = LastNotePriority;
 
@@ -541,10 +542,18 @@ void initAudioEngine(usb_midi_class usbMIDIControl) {
   // Calls to AudioRecordQueue.being must always be last in this function to avoid latency.
   effect1In.begin();
   effect2In.begin();
+
+  midiDevice = midiDvc;
+  midiDevice->setHandleControlChange(midiControlChange);
+  midiDevice->setHandleNoteOff(midiNoteOff);
+  midiDevice->setHandleNoteOn(midiNoteOn);
+  midiDevice->setHandlePitchChange(midiPitchBend);
+
+  AudioInterrupts();
 }
 
-void processMidi(usb_midi_class usbMIDIControl) {
-  usbMIDIControl.read();
+void processMidi() {
+  midiDevice->read();
 }
 
 void processAudioEngine(Effect * effect1, Effect * effect2) {

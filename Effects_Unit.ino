@@ -1,3 +1,4 @@
+#include <USBHost_t36.h>
 #include "AudioEngine.h"
 #include "TftGui.h"
 #include "TeensyPins.h"
@@ -6,6 +7,8 @@
 
 ST7735_t3 tft = ST7735_t3(PIN_DISPLAY_CS, PIN_DISPLAY_DC, PIN_DISPLAY_MOSI, PIN_DISPLAY_CLK, PIN_DISPLAY_RST);
 Window window(tft);
+USBHost usbHost;
+MIDIDevice usbMidi(usbHost);
 
 
 void setMultiplexerPins(int index) {
@@ -82,9 +85,11 @@ void setup() {
   window.createTestData();
   window.invalidate();
 
+  usbHost.begin();
+
   // initAudioEngine must be last to make sure the AudioRecordQueue.begin is the last thing called in setup. Otherwise we get latency issues
   // from a delay before the buffer is picked up and pushed to the playback queue.
-  initAudioEngine(usbMIDI);
+  initAudioEngine(&usbMidi);
 }
 
 void loop() {
@@ -93,7 +98,8 @@ void loop() {
   // processAudioEngine needs to be first. See above notes.
   processAudioEngine(effect1, effect2);
   if (effect1->usesSynthMidi) {
-    processMidi(usbMIDI);
+    usbHost.Task();
+    processMidi();
   }
 
   static int i = 0;
