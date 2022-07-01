@@ -14,7 +14,7 @@ class LostInSpaceEffect: public Effect {
     float delayLevel;
     LostInSpaceEffect();
     ~LostInSpaceEffect() override;
-    void processEffect(int16_t * effectBuffer) override;
+    void processEffect(int16_t * effectBuffer, Controls* controls) override;
 
   private:
     bool distortion;

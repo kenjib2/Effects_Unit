@@ -44,7 +44,7 @@ TestEffect::~TestEffect() {
 	delete pitchShift;
 }
 
-void TestEffect::processEffect(int16_t* effectBuffer) {
+void TestEffect::processEffect(int16_t* effectBuffer, Controls* controls) {
 //	granularBuffer->loadSamples(effectBuffer, 128);
 
 	for (int i = 0; i < 128; i++) {

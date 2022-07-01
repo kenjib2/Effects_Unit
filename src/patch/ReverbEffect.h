@@ -7,7 +7,7 @@ class ReverbEffect : public Effect {
 public:
     ReverbEffect();
     ~ReverbEffect() override;
-    void processEffect(int16_t* effectBuffer) override;
+    void processEffect(int16_t* effectBuffer, Controls* controls) override;
 
 private:
     revmodel* revModel;

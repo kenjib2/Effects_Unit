@@ -4,7 +4,7 @@
 SubtractiveSynthEffect::SubtractiveSynthEffect() {
   usesSynthMidi = true;
 
-  setEffectName("SubtractiveSynth");
+  setEffectName("Subtractive Synth");
   
   numButtons = 4;
   setButtonLabel(0, "Wav1");
@@ -35,5 +35,5 @@ SubtractiveSynthEffect::SubtractiveSynthEffect() {
   setSwitchLabel(1, "Sus");
 }
 
-void SubtractiveSynthEffect::processEffect(int16_t * effectBuffer) {
+void SubtractiveSynthEffect::processEffect(int16_t * effectBuffer, Controls* controls) {
 }

@@ -78,7 +78,7 @@ RhythmicDelayEffect::~RhythmicDelayEffect() {
 	delete delayEffect;
 }
 
-void RhythmicDelayEffect::processEffect(int16_t* effectBuffer) {
+void RhythmicDelayEffect::processEffect(int16_t* effectBuffer, Controls* controls) {
 	for (int i = 0; i < 128; i++) {
 		int16_t nextSample = effectBuffer[i];
 		nextSample = delayEffect->processSample(nextSample);

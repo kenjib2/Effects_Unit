@@ -2,6 +2,7 @@
 #include <vector>
 //#include <SPI.h>
 #include <ST7735_t3.h>
+#include <LittleFS.h>
 #include "Patch.h"
 #include "src/patch/EffectSubclasses.h"
 
@@ -113,6 +114,8 @@ class Window {
 
     void initDisplay();
     void createTestData();
+    void savePatch(LittleFS_QSPIFlash* myfs, Controls * controls, int slot);
+    void loadPatch(LittleFS_QSPIFlash* myfs, Controls * controls, std::string fileName);
     void render();
     void invalidate();
     void scrollDown();

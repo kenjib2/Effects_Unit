@@ -70,7 +70,7 @@ StandardFxChainEffect::~StandardFxChainEffect() {
   delete distortionEffect;
 }
 
-void StandardFxChainEffect::processEffect(int16_t * effectBuffer) {
+void StandardFxChainEffect::processEffect(int16_t * effectBuffer, Controls* controls) {
   for (int i = 0; i < 128; i++) {
     int16_t nextSample = effectBuffer[i];
 

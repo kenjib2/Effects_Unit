@@ -1,7 +1,20 @@
+#ifndef TEENSY_PINS_H
+#define TEENSY_PINS_H
+
+
+#include "Arduino.h"
+
+
 // Rotary Encoder
 const int PIN_ENCODER_A = 27;
 const int PIN_ENCODER_B = 28;
 const int PIN_ENCODER_CLICK = 29;
+
+// Buttons
+const int PIN_BUTTON_BLUE = 30;
+const int PIN_BUTTON_RED = 31;
+const int PIN_BUTTON_YELLOW = 32;
+const int PIN_BUTTON_GREEN = 33;
 
 
 // Analog Multiplexer for knobs
@@ -22,3 +35,6 @@ const int PIN_DISPLAY_CS = 26;
 
 // Random Seed
 const int PIN_RANDOM_SEED = A0;
+
+
+#endif // #ifndef TEENSY_PINS_H

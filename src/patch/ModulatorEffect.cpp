@@ -90,7 +90,7 @@ ModulatorEffect::~ModulatorEffect() {
 	delete flangerModulation;
 }
 
-void ModulatorEffect::processEffect(int16_t* effectBuffer) {
+void ModulatorEffect::processEffect(int16_t* effectBuffer, Controls* controls) {
 	for (int i = 0; i < 128; i++) {
 		int16_t nextSample = effectBuffer[i];
 

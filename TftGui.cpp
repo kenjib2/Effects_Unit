@@ -29,13 +29,13 @@ void Window::createTestData() {
   Patch * patch = new Patch();
   patch->setPatchName("Dark Neutron Star");
 
-//  patch->setEffect(0, "Bypass");
+  patch->setEffect(0, "Bypass");
 //  patch->setEffect(0, "Chorus");
 //  patch->setEffect(0, "Cosmosis");
 //  patch->setEffect(0, "Modulator");
-  patch->setEffect(0, "Subtractive Synth");
+//  patch->setEffect(0, "Subtractive Synth");
 
-// patch->setEffect(1, "Bypass");
+  patch->setEffect(1, "Bypass");
 //  patch->setEffect(1, "Chorus");
 //  patch->setEffect(1, "Cosmosis");
 //  patch->setEffect(1, "Lost In Space");
@@ -43,11 +43,178 @@ void Window::createTestData() {
 //  patch->setEffect(1, "Repeater");
 //  patch->setEffect(1, "Reverb");
 //  patch->setEffect(1, "Rhythmic Delay");
-  patch->setEffect(1, "Standard FX Chain");
+//  patch->setEffect(1, "Standard FX Chain");
 //  patch->setEffect(1, "Temporal Collapse");
 //   patch->setEffect(1, "Test");
 
   patchPanel.patch = patch;
+
+  int selectedEffect = 0;
+  patchPanel.selectedEffect = selectedEffect;
+  controlsPanel.effect = patchPanel.patch->effects[selectedEffect];
+}
+
+void Window::savePatch(LittleFS_QSPIFlash* myfs, Controls * controls, int slot) {
+  File file;
+
+  char slotString[4];
+  sprintf(slotString, "%03d", slot);
+
+  std::string fileName = std::string(slotString) + "." + patchPanel.patch->patchName + ".dat";
+  Serial.println(fileName.data());
+
+  char * data;
+  int dataSize = MAX_PATCH_NAME_LENGTH
+      + MAX_EFFECT_NAME_LENGTH * 2
+      + NUM_BUTTONS * sizeof(word)
+      + NUM_KNOBS * sizeof(word)
+      + sizeof(word)
+      + patchPanel.patch->extraDataSize;
+  data = (char *) malloc(dataSize);
+
+  int dataIndex = 0;
+
+  bool endFound = false;
+  for (int i = 0; i < MAX_PATCH_NAME_LENGTH; i++) {
+    if (!endFound) {
+      if (patchPanel.patch->patchName[i] == '\0') {
+        endFound = true;
+        data[i + dataIndex] = '\0';
+      } else {
+        data[i + dataIndex] = patchPanel.patch->patchName[i];
+      }
+    } else {
+      data[i + dataIndex] = '\0';
+    }
+  }
+  Serial.println(data + dataIndex);
+  dataIndex += MAX_PATCH_NAME_LENGTH;
+
+  for (int i = 0; i < NUM_EFFECTS; i++) {
+    endFound = false;
+    for (int j = 0; j < MAX_EFFECT_NAME_LENGTH; j++)  {
+      if (!endFound) {
+        if (patchPanel.patch->effects[i]->effectName[j] == '\0') {
+          endFound = true;
+          data[j + dataIndex] = '\0';
+        } else {
+          data[j + dataIndex] = patchPanel.patch->effects[i]->effectName[j];
+        }
+      } else {
+        data[j + dataIndex] = '\0';
+      }
+    }
+    Serial.println(data + dataIndex);
+    dataIndex += MAX_EFFECT_NAME_LENGTH;
+  }
+
+        // TODO
+  word temp = 123;
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    memcpy(data + dataIndex + i * sizeof(word), &temp, sizeof(word));
+  }
+  dataIndex += NUM_BUTTONS * sizeof(word);
+  
+  for (int i = 0; i < NUM_KNOBS; i++) {
+    word value = controls->getKnobValue(i);
+    memcpy(data + dataIndex + i * sizeof(word), &value, sizeof(word));
+    word output = 255;
+    memcpy(&output, data + dataIndex + i * sizeof(word), sizeof(word));
+    Serial.printf("Knob %d: %d\n", i, output);
+  }
+  dataIndex += NUM_KNOBS * sizeof(word);
+
+  if (patchPanel.patch->extraDataSize > 0) {
+    memcpy(data + dataIndex, patchPanel.patch->extraData, patchPanel.patch->extraDataSize);
+  }
+  dataIndex += patchPanel.patch->extraDataSize;
+
+  myfs->remove(fileName.data());
+  File dataFile = myfs->open(fileName.data(), FILE_WRITE);
+  if (dataFile) {
+    dataFile.write(data, dataSize);
+    dataFile.close();
+    Serial.printf("%s saved.\n", fileName.data());
+  } else {
+    // if the file isn't open, pop up an error:
+    Serial.println("error opening " + dataFile);
+  }
+
+  free(data);
+
+  File test = myfs->open(fileName.data(), FILE_READ);
+  if (file) {
+    char patchName[MAX_PATCH_NAME_LENGTH + 1];
+    for (int i = 0; i < MAX_PATCH_NAME_LENGTH && file.available(); i++) {
+      char ch = test.read();
+      patchName[i] = ch;
+    }
+    patchName[MAX_PATCH_NAME_LENGTH] = '\0';
+    Serial.println(patchName);
+    
+    for (int i = 0; i < NUM_EFFECTS; i++) {
+      char effectName[MAX_EFFECT_NAME_LENGTH + 1];
+      for (int j = 0; j < MAX_EFFECT_NAME_LENGTH && file.available(); j++) {
+        char ch = test.read();
+        effectName[j] = ch;
+      }
+      effectName[MAX_EFFECT_NAME_LENGTH] = '\0';
+      Serial.println(effectName);
+    }
+    
+    test.close();
+  } else {
+      Serial.println("READ ERROR");
+  }
+}
+
+void Window::loadPatch(LittleFS_QSPIFlash* myfs, Controls * controls, std::string fileName) {
+  Patch * newPatch = new Patch();
+  
+  File file = myfs->open(fileName.data(), FILE_READ);
+  if (file) {
+    char patchName[MAX_PATCH_NAME_LENGTH + 1];
+    for (int i = 0; i < MAX_PATCH_NAME_LENGTH && file.available(); i++) {
+      char ch = file.read();
+      patchName[i] = ch;
+    }
+    patchName[MAX_PATCH_NAME_LENGTH] = '\0';
+    Serial.println(patchName);
+    newPatch->setPatchName(patchName);
+    
+    for (int i = 0; i < NUM_EFFECTS; i++) {
+      char effectName[MAX_EFFECT_NAME_LENGTH + 1];
+      for (int j = 0; j < MAX_EFFECT_NAME_LENGTH && file.available(); j++) {
+        char ch = file.read();
+        effectName[j] = ch;
+      }
+      effectName[MAX_EFFECT_NAME_LENGTH] = '\0';
+      newPatch->setEffect(i, std::string(effectName));
+      Serial.println(effectName);
+    }
+
+    for (int i = 0; i < NUM_BUTTONS && file.available(); i++) {
+      char ch1 = file.read();
+      char ch2 = file.read();
+      word value = ((word)ch2 << 8) + ch1;
+      Serial.println(value);
+        // TODO
+    }
+
+    controls->resetKnobInputs();
+    for (int i = 0; i < NUM_KNOBS && file.available(); i++) {
+      char ch1 = file.read();
+      char ch2 = file.read();
+      word value = ((word)ch2 << 8) + ch1;
+      controls->setKnobValue(i, value);
+      Serial.println(value);
+    }
+  } else {
+    Serial.printf("unable to open %s.\n", fileName);
+  }
+  file.close();
+
+  patchPanel.patch = newPatch;
 
   int selectedEffect = 0;
   patchPanel.selectedEffect = selectedEffect;

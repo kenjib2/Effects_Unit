@@ -46,7 +46,7 @@ BypassEffect::BypassEffect() {
   numSwitches = 0;
 }
 
-void BypassEffect::processEffect(int16_t * effectBuffer) {
+void BypassEffect::processEffect(int16_t * effectBuffer, Controls * controls) {
 }
 
 

@@ -305,15 +305,15 @@ void initAudioEngine(MIDIDevice * midiDvc) {
 
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
-//  sgtl5000_1.unmuteLineout();
+  sgtl5000_1.unmuteLineout();
   sgtl5000_1.volume(0.50);
-//  sgtl5000_1.lineInLevel(1); //use 2 for 1:1
-//  sgtl5000_1.lineOutLevel(13);  
+  sgtl5000_1.lineInLevel(1); //use 2 for 1:1
+  sgtl5000_1.lineOutLevel(13);  
 
   synthMixer.gain(0, 1.0);
-  synthMixer.gain(1, 1.0);
-  synthMixer.gain(2, 1.0);
-  synthMixer.gain(3, 1.0);
+  synthMixer.gain(1, 0.05);
+  synthMixer.gain(2, 0.05);
+  synthMixer.gain(3, 0.05);
 
   synthPolyphony_1.gain(0, 0.3);
   synthPolyphony_1.gain(1, 0.3);
@@ -556,7 +556,7 @@ void processMidi() {
   midiDevice->read();
 }
 
-void processAudioEngine(Effect * effect1, Effect * effect2) {
+void processAudioEngine(Effect * effect1, Effect * effect2, Controls * controls) {
   if (effect1In.available() >= 1) {
     while (effect1In.available() > 1) {
       Serial.print("Samples dropped. Buffers available: ");
@@ -567,7 +567,7 @@ void processAudioEngine(Effect * effect1, Effect * effect2) {
     int16_t *audioBuffer = effect1Out.getBuffer();
     memcpy(audioBuffer, effect1In.readBuffer(), 256);
     effect1In.freeBuffer();
-    effect1->processEffect(audioBuffer);
+    effect1->processEffect(audioBuffer, controls);
     effect1Out.playBuffer();
   }
 
@@ -579,7 +579,7 @@ void processAudioEngine(Effect * effect1, Effect * effect2) {
     int16_t *audioBuffer = effect2Out.getBuffer();
     memcpy(audioBuffer, effect2In.readBuffer(), 256);
     effect2In.freeBuffer();
-    effect2->processEffect(audioBuffer);
+    effect2->processEffect(audioBuffer, controls);
     effect2Out.playBuffer();
   }
 }

@@ -58,7 +58,7 @@ CosmosisEffect::~CosmosisEffect() {
 	}
 }
 
-void CosmosisEffect::processEffect(int16_t* effectBuffer) {
+void CosmosisEffect::processEffect(int16_t* effectBuffer, Controls* controls) {
 	for (int i = 0; i < 128; i++) {
 		int16_t nextSample = effectBuffer[i];
 		for (int i = 0; i < NUM_COSMOSIS_BUFFERS; i++) {

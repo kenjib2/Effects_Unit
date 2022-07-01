@@ -19,7 +19,7 @@ enum SynthMode {
 
 void initAudioEngine(MIDIDevice * midiDevice);
 void processMidi();
-void processAudioEngine(Effect * effect1, Effect * effect2);
+void processAudioEngine(Effect * effect1, Effect * effect2, Controls * controls);
 void setKnob(int knobNumber, short value);
 
 

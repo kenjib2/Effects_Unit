@@ -1,7 +1,12 @@
 #include "RepeaterEffect.h"
 
 
-RepeaterEffect::RepeaterEffect() {
+const int REPEATER_BUFFER_SIZE = 88200;
+
+
+RepeaterEffect::RepeaterEffect() 
+	: repeatMin(1000)
+{
 	usesSynthMidi = false;
 
 	setEffectName("Repeater");
@@ -30,13 +35,14 @@ RepeaterEffect::RepeaterEffect() {
 	numSwitches = 1;
 	setSwitchLabel(0, "Tmpo");
 
+	delayEffect = new MultiTapDelay(REPEATER_BUFFER_SIZE);
+	repeatMax = REPEATER_BUFFER_SIZE / 16;
 	repeatLength = 4000;
-	delayEffect = new MultiTapDelay();
 	delayEffect->setNumTaps(15);
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < 15; i++) {
 		delayEffect->setTapDelayLength(i, repeatLength * (i + 1));
-		Serial.println(repeatLength * (i + 1));
 	}
+	delayEffect->setPrimaryDelayLevel(0.f);
 	delayEffect->setTapDelayLevel(0, 0.2f);
 	delayEffect->setTapDelayLevel(1, 0.0f);
 	delayEffect->setTapDelayLevel(2, 0.8f);
@@ -53,16 +59,21 @@ RepeaterEffect::RepeaterEffect() {
 	delayEffect->setTapDelayLevel(13, 0.8f);
 	delayEffect->setTapDelayLevel(14, 0.9f);
 	delayEffect->paramReverse = false;
-	delayEffect->paramDry = 1.0f;
-	delayEffect->paramWet = 0.6f;
-	delayEffect->paramFeedback = 0.0f;
+	delayEffect->paramDry = 1.f;
+	delayEffect->paramWet = 1.f;
+	delayEffect->paramFeedback = 0.f;
 }
 
 RepeaterEffect::~RepeaterEffect() {
 	delete delayEffect;
 }
 
-void RepeaterEffect::processEffect(int16_t* effectBuffer) {
+void RepeaterEffect::processEffect(int16_t* effectBuffer, Controls* controls) {
+	repeatLength = controls->getKnobValue(0) / 255.f * (repeatMax - repeatMin) + repeatMin;
+	for (int i = 0; i < 15; i++) {
+		delayEffect->setTapDelayLevel(i, controls->getKnobValue(i + 1) / 255.f);
+		delayEffect->setTapDelayLength(i, repeatLength * (i + 1));
+	}
 	for (int i = 0; i < 128; i++) {
 		int16_t nextSample = effectBuffer[i];
 		nextSample = delayEffect->processSample(nextSample);
